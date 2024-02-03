@@ -1,0 +1,61 @@
+.containerHistory{
+  
+    width: 100% ;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    overflow-y: auto;
+    box-sizing: border-box;
+    height: 450px;
+    margin-top: 50px;
+    padding-top: -20px;
+    gap: 10px
+}
+
+.p {
+    min-width: 100px;
+}
+
+.contentHistory{
+    height: 90px;
+    width: 90%;
+    background-color: #FF5A5A;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color:white;
+}
+
+table {
+    border-collapse: collapse;
+    border-style: hidden;
+}
+
+table td, table th {
+    border: 1px solid white;
+    width: 150px;
+    text-align: center;
+    padding-block: 5px;
+}
+
+@media only screen and (max-width: 900px) {
+    .containerHistory {
+        font-size: 1rem;
+    }
+
+    .childProfil{
+        height: 800px;
+        width: 90%;
+        border-radius: 5px;
+        display: flex;
+        justify-content: flex-start;
+        padding-top: 20px;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .p {
+        min-width: 60px;
+    }
+}

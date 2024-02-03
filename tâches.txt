@@ -1,0 +1,14 @@
+/-- Reste a faire --/
+
+- Autoriser les connexions aux sockets seulement qui on est connecté avec 42
+- Passer aux sockets les informations concernant le joueur (nom au moin)
+- Enregistrer les scores a chaque fin de partie dans la BDD
+
+- Connexion 2FA
+- Le chat avec le sockets
+- Responsive
+
+
+/-- Reglé --/
+
+- On ne peux plus se connecter sur la meme room avec le meme compte

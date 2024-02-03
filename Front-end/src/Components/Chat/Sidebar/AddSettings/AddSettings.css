@@ -1,0 +1,164 @@
+.containerSettingChat{
+    position: absolute;
+    height: 40%;
+    width: 20%;
+    background-color: #929292;
+    right: 130px;
+    z-index: 2;
+    border-radius: 5px;
+    top: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.pChatSetting{
+    color:white;
+    font-size: 15px;
+    font-weight: 600;
+    position: absolute;
+    top: 0;
+}
+
+.containerOptionSetting{
+    height: 80%;
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    flex-direction: column;
+    
+    
+}
+
+.buttonSettingChat{
+    height: 40px;
+    width: 80%;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.buttonSettingChat:active{
+    transform: scale(1.1);
+}
+
+.inputChatSetting{
+    height: 30px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    box-sizing: border-box;
+    padding-left: 10px;
+    width: 80%;
+    margin-bottom: 10px;
+
+}
+.ctnOptChnl{
+    height: 30px;
+    width: 80%;
+
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+overflow: hidden;
+    border-radius: 5px;
+    margin-bottom: 10px;
+
+    
+}
+
+.buttonCtnOptChnl{
+    width: 50%;
+    height: 100%;
+    border: none;
+    outline: none;
+    background-color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+
+}
+
+.buttonValidateSetngChannel{
+    height: 40px;
+    width: 80%;
+    background-color: white;
+    border: none;
+    outline: none;
+    margin-top: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+   
+}
+
+.buttonValidateSetngChannel:active{
+    transform: scale(1.1);
+}
+
+.containerSearchFriends{
+    height: 90%;
+    width: 100%;
+    margin-top: 10px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {width: 0;}
+    
+     
+      
+}
+
+.containerSendFriends{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    margin-top: 5px;
+    overflow: auto;
+      
+}
+
+.friendOptSetting{
+    width: 90%;
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border-radius: 5px;
+    box-sizing: border-box;
+    padding-left: 20px;
+    padding-right: 10px;
+    font-size: 15px;
+}
+
+.buttonSendMsg{
+    width: 50%;
+    height: 70%;
+    background-color: green;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+}
+.buttonSendMsg:active{
+    transform: scale(1.1);
+}
+.pSendDm{
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    width: 80%;
+    margin-top: 25%;
+}

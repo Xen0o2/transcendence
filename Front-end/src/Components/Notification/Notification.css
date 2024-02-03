@@ -1,0 +1,79 @@
+.containerNotification{
+    top : 10vh;
+    width: 18vw;
+    min-height: 14vh;
+    left: 0;
+    left: 2vw;
+    z-index: 3;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.childNotification{
+    min-height: 80px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    box-sizing: border-box;
+}
+
+.titleNotification{
+    margin: 0;
+    font-size: 1.5vh;
+    border-bottom: 1px solid white;
+}
+
+.messageNotification {
+    font-size: 2vh;
+}
+
+.containerTitleNotification{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    box-sizing: border-box;
+}
+
+.logoNotification{
+    min-height: 3vh;
+    width: 1.5vw;
+    color:white;
+}
+
+.logoCloseNotif{
+    min-height: 3vh;
+    width: 1.5vw;
+    color:white;
+    cursor: pointer;
+}
+
+.logoCloseNotif:active{
+    transform: scale(1.1);
+}
+
+.notification-container {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+}
+@media only screen and (max-width: 900px) {
+    .containerNotification{
+        display: none;
+    }
+}

@@ -1,0 +1,104 @@
+.containerDoubleAuth{
+    width: 100%;
+    min-width: 1200px;
+    min-height: 700px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 50px;
+}
+
+.childDoubleAuth{
+  height: 400px;
+  width: 450px;
+  margin-top: 60px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 5px;
+  flex-direction: column;
+  position: relative;
+  padding-top: 100px;
+  box-sizing: border-box;
+}
+.number2fa{
+    height: 30%;
+    width: 80%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.inputNumber{
+    height: 70%;
+    width: 50px;
+    font-size: 30px;
+    text-align: center;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+}
+
+.button2fa{
+    height: 15%;
+    width: 40%;
+    border:1px solid white;
+    border: none;
+    background-color: white;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.button2fa:active{
+    transform: scale(1.1);
+}
+
+.qrCodeImg{
+    height: 40%;
+    border:3px solid white;
+    border-radius: 5px;
+}
+
+@media only screen and (max-width: 900px) {
+    .containerDoubleAuth{
+        width: 100%;
+        min-width: 0px;
+        min-height: 500px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-top: 50px;
+    }
+    
+    .childDoubleAuth{
+      height: 400px;
+      width: 80%;
+      margin-top: 60px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-radius: 5px;
+      flex-direction: column;
+      position: relative;
+      padding-top: 100px;
+      box-sizing: border-box;
+    }
+    .inputNumber{
+        height: 60%;
+        width: 40px;
+        font-size: 30px;
+        text-align: center;
+        border-radius: 5px;
+        border: none;
+        outline: none;
+    }
+    .number2fa{
+        height: 30%;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+}

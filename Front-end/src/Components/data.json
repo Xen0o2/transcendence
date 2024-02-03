@@ -1,0 +1,55 @@
+[
+  {
+    "name": "Alex",
+    "person": 0,
+    "messages": [
+      { "text": "Salut ! Comment ça va ?", "type": "user" },
+      { "text": "Salut Alex ! Ça va bien, merci.", "type": "i" },
+      { "text": "Qu'as-tu fait aujourd'hui ?", "type": "user" },
+      { "text": "Pas grand-chose, juste du travail. Et toi ?", "type": "i" },
+      { "text": "J'ai fait une promenade et j'ai lu un livre.", "type": "user" },
+      { "text": "Cela semble agréable. Quel livre as-tu lu ?", "type": "i" },
+      { "text": "J'ai lu 'Le Seigneur des Anneaux'.", "type": "user" },
+      { "text": "Ah, j'adore ce livre !", "type": "i" }
+    ],
+    "group": false
+  },
+  {
+    "name": "Tunsinge",
+    "person": 1,
+    "messages": [],
+    "group": false
+  },
+  {
+    "name": "CaTAnk",
+    "person": 2,
+    "messages": [],
+    "group": false
+  },
+  {
+    "name": "Dustin",
+    "person": 3,
+    "messages": [],
+    "group": false
+  },
+  {
+    "name": "Polémique",
+    "person": 3,
+    "messages": [],
+    "group": true,
+    "type": "private",
+    "owner": "gabin",
+    "admin": ["gabin", "renard"],
+    "members": ["gabin", "doumi", "kaka"]
+  },
+  {
+    "name": "Zizi",
+    "person": 3,
+    "messages": [],
+    "group": true,
+    "type": "private",
+    "owner": "gabin",
+    "admin": ["gabin", "doumi"],
+    "members": ["gabin", "doumi", "tunsinge", "dustin", "marwen"]
+  }
+]

@@ -1,0 +1,172 @@
+.containerPseudo {
+  width: 100%;
+  min-width: 1200px;
+  min-height: 700px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 50px;
+}
+
+.containerPseudoChild {
+  height: 400px;
+  width: 450px;
+  margin-top: 60px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: aqua;
+  border-radius: 5px;
+  flex-direction: column;
+  position: relative;
+  padding-top: 130px;
+  box-sizing: border-box;
+}
+.inputPseudo {
+  height: 30px;
+  width: 70%;
+  outline: none;
+  border: none;
+  border-bottom: 1px solid white;
+  color: white;
+  font-size: 16px;
+}
+
+.inputPseudo::placeholder {
+  color: white;
+}
+
+.title {
+  height: 80px;
+  width: 100%;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  font-size: 20px;
+  color: white;
+  background-color: #7a7979;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  
+}
+
+.upload {
+  background-color: white;
+  height: 45px;
+  width: 100%;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-sizing: border-box;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.upload:active {
+  transform: scale(1.1);
+}
+
+.validButton {
+  height: 45px;
+  width: 30%;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  margin-left: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  background-color: white;
+}
+.validButton:hover {
+  background-color: #7a7979;
+  color: white;
+}
+
+.validButton:active {
+  transform: scale(1.1);
+}
+
+.containerValid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+#cancelButton {
+  background-color: #FF5A5A;
+  color: white;
+}
+#cancelButton:hover {
+  background-color: #d80000;
+}
+
+
+.imgUpload{
+  height: 100%;
+  width: 100%;
+  border-radius: 100px;
+  object-fit: cover;
+  cursor: pointer;
+  
+}
+
+.containerImgUpload{
+  border: 3px solid white;
+  height: 70px;
+  width: 70px;
+  border-radius: 100px;
+  object-fit: cover;
+}
+
+.containerUpload{
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.penUpload{
+  position: absolute;
+  right: -3px;
+  color: white;
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 900px) {
+  .containerPseudo {
+    width: 100%;
+    min-width: 0px;
+    min-height: 700px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 50px;
+  }
+  .containerPseudoChild {
+    height: 400px;
+    width: 90%;
+    margin-top: 60px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: aqua;
+    border-radius: 5px;
+    flex-direction: column;
+    position: relative;
+    padding-top: 130px;
+    box-sizing: border-box;
+  }
+}

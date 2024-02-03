@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+	id          	 String      @id
+	login       	 String		 @unique
+	firstname    	 String
+	lastname    	 String
+	image       	 String?
+	victory			 Int		  @default(0)
+	defeat			 Int	      @default(0)
+	level			 Int		  @default(1)
+	experience		 Int		  @default(0)
+	friendsOf   	 User[]		  @relation("Friends")
+	friends     	 User[]       @relation("Friends")
+	blockedBy   	 User[]		  @relation("Blocked")
+	blockedUsers	 User[]		  @relation("Blocked")
+	friendship1 	 Friendship[] @relation("FriendshipUser1")
+	friendship2 	 Friendship[] @relation("FriendshipUser2")
+	matches1    	 Match[]      @relation("MatchUser1")
+	matches2     	 Match[]      @relation("MatchUser2")
+	matchWinner      Match[]	  @relation("MatchWinner")
+	dmchannel1   	 DMChannel[]  @relation("DMChannelUser1")
+	dmchannel2   	 DMChannel[]  @relation("DMChannelUser2")
+	dmchannelblocked DMChannel[]  @relation("DMChannelBlocker")
+	channels    	 Channel[]
+	admins      	 Channel[]    @relation("Admins")
+	users       	 Channel[]    @relation("ChannelUsers")
+	messages    	 Message[]	  @relation("MessageSender")
+	muted			 Muted[]
+	bannedFrom		 Channel[]    @relation("bannedUsers")
+
+	createdAt 		 DateTime     @default(now())
+	updatedAt 		 DateTime     @default(now()) @updatedAt
+}
+
+model Friendship {
+	id  	Int    	 	     @id @default(autoincrement())
+	user1   User  		     @relation("FriendshipUser1", fields: [user1id], references: [id])
+	user1id String
+	user2   User    		 @relation("FriendshipUser2", fields: [user2id], references: [id])
+	user2id String
+	@@unique([user1id, user2id])
+	status  FriendshipStatus @default(PENDING)
+}
+
+model Match {
+	id         Int      @id @default(autoincrement())
+	user1      User     @relation("MatchUser1", fields: [user1id], references: [id])
+	user1id    String
+	user2      User     @relation("MatchUser2", fields: [user2id], references: [id])
+	user2id    String
+	scoreUser1 Int
+	scoreUser2 Int
+	winner	   User?    @relation("MatchWinner", fields: [winnerid], references: [id])
+	winnerid   String?   
+	createdAt  DateTime @default(now())
+	updatedAt  DateTime @default(now()) @updatedAt
+}
+
+model Channel {
+	id        String         @id @default(uuid())
+	type      ChannelType @default(PUBLIC)
+	name      String
+	password  String?
+	owner     User        @relation(fields: [ownerId], references: [id])
+	ownerId   String
+	admins    User[]      @relation("Admins")
+	users     User[]      @relation("ChannelUsers")
+	messages  Message[]   @relation("ChannelMessages")
+	muted	  Muted[]
+	banned    User[]	  @relation("bannedUsers")
+
+	createdAt DateTime    @default(now())
+	updatedAt DateTime    @default(now()) @updatedAt
+}
+
+model Muted {
+	id		  Int      @id @default(autoincrement())
+	userId    String
+	user	  User     @relation(fields: [userId], references: [id])
+	channelId String
+	channel   Channel  @relation(fields: [channelId], references: [id])
+	@@unique([userId, channelId])
+  
+  	createdAt DateTime @default(now())
+  	updatedAt DateTime @default(now()) @updatedAt
+}
+
+model DMChannel {
+  id        String       @id @default(uuid())
+  user1     User      @relation("DMChannelUser1", fields: [user1id], references: [id])
+  user1id   String
+  user2     User      @relation("DMChannelUser2", fields: [user2id], references: [id])
+  user2id   String
+  @@unique([user1id, user2id])
+  status	DMChannelStatus @default(OPEN)
+  blockerid String?
+  blockedBy User? @relation("DMChannelBlocker", fields: [blockerid], references: [id])
+  messages  Message[] @relation("DMChannelMessages")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+}
+
+model Message {
+  id          Int        @id @default(autoincrement())
+  content     String
+  sender      User       @relation("MessageSender", fields: [senderId], references: [id])
+  senderId    String
+  channel     Channel?   @relation("ChannelMessages", fields: [channelId], references: [id])
+  channelId   String?	
+  dmchannel   DMChannel? @relation("DMChannelMessages", fields: [dmchannelId], references: [id])
+  dmchannelId String?
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now()) @updatedAt
+}
+
+enum DMChannelStatus {
+	OPEN
+	BLOCKED
+	CLOSED
+}
+
+enum ChannelType {
+	PUBLIC
+	PRIVATE
+}
+
+enum FriendshipStatus {
+	PENDING
+	ACCEPTED
+}

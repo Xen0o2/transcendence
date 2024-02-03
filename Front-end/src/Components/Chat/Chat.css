@@ -1,0 +1,335 @@
+.containerChat{
+    width: 40%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.chat {
+    height: 100%;
+    width: 70%;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .channel {
+    height: 82%;
+    width: 100%;
+
+    border-radius: 5px;
+    box-sizing: border-box;
+    overflow-y: auto;
+  
+    /* Masquer la barre de défilement dans WebKit (Chrome, Safari) */
+    &::-webkit-scrollbar {
+      width: 0;
+    }
+  
+    /* Masquer la barre de défilement dans Firefox */
+    scrollbar-width: none;
+  }
+  
+  .containerChannel{
+
+    height: 100%;
+    width: 12%;
+    margin-left: 5px;
+    border-radius: 5px;
+    max-width: 60px;
+  }
+
+  .circleChat{
+    height: 45px;
+    width: 45px;
+    border-radius: 15px;
+    background-color: grey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin-top: 5px;
+    color: white;
+    flex-direction: column;
+    padding-bottom: 2px;
+    box-sizing: border-box;
+    font-size: 16px;
+
+  }
+  .containerCircleChat{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 45px;
+    margin-top: 10px;
+    position: relative;
+   
+  }
+
+  .circleChat:active{
+    transform: scale(1.1);
+  }
+
+  .containerTopChat {
+    height: 83%;
+    width: 100%;
+    background-color: white;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+  }
+
+  .containerBottomChat {
+    height: 15%;
+    width: 100%;
+    background-color: white;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .numberOfCharacters {
+    font-size: 10px;
+    color: white;
+    position: absolute;
+    bottom: 0;
+    right: 1;
+    margin: 1px;
+  }
+
+  .chatInput {
+    height: 60%;
+    width: 90.5%;
+    resize: none;
+    outline: none;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+  }
+
+  .selectChat {
+    height: 8%;
+    width: 90%;
+    background-color: white;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+  }
+
+  .msgChat {
+    height: 90%;
+    width: 90%;
+    background-color: white;
+    border-radius: 5px;
+    padding: 5px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    position: relative;
+
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+
+    &::-webkit-scrollbar {
+        width: 0;
+      }
+    
+      /* Masquer la barre de défilement dans Firefox */
+      scrollbar-width: none;
+     
+  }
+
+
+  #mySelect {
+    height: 100%;
+    width: 100%;
+    border: none;
+    outline: none;
+    padding-right: 10px;
+    font-size: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 10px;
+  }
+
+  .arrowShift {
+    margin-left: 10px;
+  }
+
+  #mySelect option {
+    background-color: red;
+    min-width: 1450px;
+    border-radius: 5px;
+    outline: none;
+    position: absolute;
+  }
+
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    outline: 0;
+    box-shadow: none;
+    border: 0 !important;
+    background: white;
+    background-image: none;
+    flex: 1;
+    padding-left: 20px;
+    color: black;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: "Open Sans", sans-serif;
+    border: 10px solid white;
+    
+  }
+  select::-ms-expand {
+    display: none;
+  }
+  .select {
+    position: relative;
+    display: flex;
+    width: 80%;
+    height: 100%;
+    line-height: 3;
+    background: #5c6664;
+    overflow: hidden;
+    border-radius: 0.25em;
+  }
+  .select::after {
+    content: "\25BC";
+    position: absolute;
+    top: 0px;
+    right: 0;
+    padding: 0 1em;
+    background: white;
+    cursor: pointer;
+    pointer-events: none;
+    transition: 0.25s all ease;
+    border-left: 1px solid black;
+    font-size: 0.8em;
+  }
+  .select:hover::after {
+    color: #23b499;
+  }
+
+
+.textBeforeSelect {
+  font-size: 12px;
+}
+
+.ContainertextBeforeSelect {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 60%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.crabIcon{
+  height: 30%;
+  width: 15%;
+}
+
+.containerSelect{
+  height: 10%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 5%;
+  padding-right: 5%;
+  box-sizing: border-box;
+  display: none;
+}
+
+.settingChat{
+
+  color: white;
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+  position: absolute;
+  bottom: 15px;
+  right: 9px;
+
+
+}
+
+.settingChat:active{
+  transform: scale(1.1);
+}
+.nameConv{
+    height: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    width: 90%;
+    box-sizing: border-box;
+    background-color: white;
+    border-radius: 5px;
+    font-size: 15px;
+   position: relative;
+}
+
+#addMsg{
+  position: absolute;
+  bottom: 10px;
+  right: 7px;
+}
+
+.settingUser{
+  height: 70%;
+  width: 10%;
+
+  color: black;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: absolute;
+  right: 5%;
+}
+
+.settingUser:active{
+  transform: scale(1.1);
+}
+
+.logoChannel{
+  height: 10px; 
+}
+
+.profilePicChannel {
+  border-radius: 15px;
+  height: 45px;
+  margin-top: 2px;
+}
+
+.containerLoaderSideBar{
+  margin-top: 20%;
+}
+
+@media only screen and (max-width: 900px) {
+    .containerChat{
+        display: none;
+    }
+}

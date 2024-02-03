@@ -1,0 +1,327 @@
+.containerUserP{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+    
+}
+
+.userPublic{
+    height: 90px;
+    width: 90%;
+    background-color: white;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
+}
+
+.circleOnline{
+    height: 30px;
+    width: 30px;
+    border-radius: 100px;
+}
+
+.imgUserP{
+    height: 60px;
+    width: 60px;
+    border-radius: 100px;
+}
+
+.infoUserP{
+    width: 70%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttonAdd{
+    width: 130px;
+    height: 50px;
+    background-color: green;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    border: none;
+    outline: none;
+}
+
+.buttonAdd:active{
+    transform: scale(1.1);
+}
+
+.buttonBlock{
+    width: 130px;
+    height: 50px;
+    background-color: #FF5A5A;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    border: none;
+    outline: none;
+}
+
+.buttonWaiting{
+    width: 130px;
+    height: 50px;
+    background-color: gray;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    border: none;
+    outline: none;
+}
+
+.buttonBanned {
+    width: 130px;
+    height: 50px;
+    background-color: #FF5A5A;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    border: none;
+    outline: none;
+}
+
+.buttonAccept{
+    width: 130px;
+    height: 50px;
+    background-color: green;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    border: none;
+    outline: none;
+}
+
+.buttonAccept:active{
+    transform: scale(1.1);
+}
+
+
+.buttonFriend{
+    width: 130px;
+    height: 50px;
+    background-color: green;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    border: none;
+    outline: none;
+}
+
+
+
+.leftInfos{
+    width: 50%;
+    height: 90%;
+    border-right: 1px solid grey;
+    display:flex;
+    justify-content: left;
+    align-items: center;
+}
+
+.rightInfos{
+    width: 50%;
+    height: 100%;
+    display:flex;
+    align-items: center;
+    flex-direction: column;
+    box-sizing: border-box;
+
+}
+
+.viewinfos{
+    height: 20px;
+    width: 80px;
+    background-color: green;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+}
+
+.viewinfos:active{
+    transform: scale(1.1);
+}
+
+.playingP{
+    height:25%;
+    font-size: 16px;
+ 
+}
+
+.containerLeft{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 50%;
+}
+.infoUserPChannel{
+    width: 55%;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    
+}
+
+
+
+@media only screen and (max-width: 900px) {
+    .buttonAdd{
+        width: 80px;
+        height: 30px;
+        background-color: green;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+        font-size: 16px;
+        border: none;
+        outline: none;
+    }
+    .buttonBlocked{
+        width: 80px;
+        height: 30px;
+        background-color: #FF5A5A;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+        font-size: 16px;
+        border: none;
+        outline: none;
+    }
+    .containerLeft{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 75%;
+    }
+    .viewinfos{
+        height: 20px;
+        width: 50px;
+        background-color: green;
+        border: none;
+        outline: none;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        cursor: pointer;
+    }
+    .circleOnline{
+        height: 20px;
+        width: 20px;
+        border-radius: 100px;
+    }
+    .leftInfos{
+        width: 50%;
+        height: 90%;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 10px;
+    }
+    .infoUserP{
+        width: 60%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      
+    }
+    .userPublic{
+        height: 90px;
+        width: 95%;
+        background-color: white;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-left: 10px;
+        padding-right: 10px;
+        box-sizing: border-box;
+    }
+    .imgUserP{
+        height: 40px;
+        width: 40px;
+        border-radius: 100px;
+    }
+    
+    .playingP{
+        height:25%;
+        font-size: 10px;
+        margin: 0;
+        width: 50%;
+    
+    }
+    .buttonFriend{
+        width: 80px;
+        height: 30px;
+        background-color: green;
+        border-radius: 5px;
+        color: white;
+        font-size: 16px;
+        border: none;
+        outline: none;
+    }
+    .buttonBlock{
+        width: 80px;
+        height: 30px;
+        background-color: #FF5A5A;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+        font-size: 16px;
+        border: none;
+        outline: none;
+    }
+    .rightInfos{
+        width: 50%;
+        height: 90%;
+        display:flex;
+        align-items: center;
+        flex-direction: column;
+        box-sizing: border-box;
+    }
+    .buttonAccept{
+        width: 80px;
+        height: 30px;
+        background-color: green;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+        font-size: 16px;
+        border: none;
+        outline: none;
+    }
+    .infoUserPChannel{
+        width: 40%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        
+    }
+    .pChannel{
+        font-size: 10px;
+        width: 100%;
+        text-align: center;;
+    }
+    
+    
+
+}

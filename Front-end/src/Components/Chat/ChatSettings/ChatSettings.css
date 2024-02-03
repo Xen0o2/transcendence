@@ -1,0 +1,185 @@
+.containerSettingGroup{
+    position: absolute;
+    height: 55%;
+    width: 70%;
+    background-color: #929292;
+    right: 20;
+
+    z-index: 2;
+    border-radius: 5px;
+    top: 20%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    font-size: 15px;
+    padding-top: -10%;
+}
+
+.containerSettingGroupChild{
+    height: 90%;
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: -5%;
+    position: relative;
+}
+
+.containerInfosGroup{
+    height: 80%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    box-sizing: border-box;
+}
+
+.seeButtonGroup{
+    height: 50%;
+    width: 30%;
+    background-color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+}
+
+.seeButtonGroup:active{
+    transform: scale(1.1);
+}
+
+.deleteButtonGroup{
+    font-weight: 400;
+    color: black;
+    margin-top: 20px;
+    height: 60%;
+    margin: 5px;
+    width: 60%;
+    background-color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+}
+
+
+.deleteButtonGroup:active{
+    transform: scale(1.1);
+}
+
+.horizontalButtons {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.pInfosGroup{
+
+    width: 40%;
+}
+
+.returnGroup{
+    z-index: 2;
+    position: absolute;
+    width: 20%;
+    height: 6%;
+    top:7%;
+    left: 1%;
+    cursor: pointer;
+}
+
+.returnGroup:active{
+    transform: scale(1.1);
+}
+
+.containerAdmn{
+    height: 50%;
+    width: 90%;
+    overflow: auto;
+    &::-webkit-scrollbar {
+        width: 0;
+      }
+    scrollbar-width: none;
+}
+
+.memberGroup{
+    height: 20%;
+    background-color: white;
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 4%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: black;
+    
+}
+
+.banGroup {
+    color: red;
+    cursor: pointer;
+    transform: scale(1.3);
+}
+
+.banGroup:active {
+    transform: scale(1.4);
+}
+
+.muteGroup {    
+    cursor: pointer;
+    transform: scale(1.3);
+}
+
+.muteGroup:active {
+    transform: scale(1.4);
+}
+
+.crossGroup{
+    color: red;
+    cursor: pointer;
+}
+
+.crossGroup:active{
+    transform: scale(1.1);
+}
+
+.symbolGroup{
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.symbolGroup:active{
+    transform: scale(1.3);
+    cursor: pointer;
+}
+
+.buttonAddGroup{
+    height: 15%;
+    margin-top: 5%;
+    width: 90%;
+    border: none;
+    background-color: white;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+}
+
+.buttonAddGroup:active{
+    transform: scale(1.1);
+}
+
+.titleSettingGroup{
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+

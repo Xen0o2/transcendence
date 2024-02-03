@@ -1,0 +1,35 @@
+import { Channel, Muted, Prisma } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
+export declare class ChannelController {
+    private readonly prisma;
+    constructor(prisma: PrismaService);
+    channel(channelWhereUniqueInput: Prisma.ChannelWhereUniqueInput): Promise<Channel | null>;
+    channels(channelWhereInput: Prisma.ChannelWhereInput): Promise<Channel[]>;
+    update(channelUpdateInput: Prisma.ChannelUpdateArgs): Promise<Channel | null>;
+    create(data: Prisma.ChannelCreateInput): Promise<Channel>;
+    delete(channelWhereUnique: Prisma.ChannelWhereUniqueInput): Promise<Channel | null>;
+    createMuted(data: Prisma.MutedCreateInput): Promise<Muted | null>;
+    deleteMuted(mutedWhereUniqueInput: Prisma.MutedWhereUniqueInput): Promise<Muted | null>;
+    createChannel(userData: any): Promise<Channel | null>;
+    addUserToGroup(channelId: string, userId: string): Promise<Channel>;
+    addAdminToGroup(channelId: string, userId: string): Promise<Channel>;
+    joinChannel(channelId: string, userId: string): Promise<Channel | null>;
+    joinChannelWithPassword(channelId: string, userId: string, userData: any): Promise<Channel | null>;
+    leaveChannel(channelId: string, userId: string): Promise<Channel | null>;
+    leaveChannelAsOwner(channelId: string, userId: string): Promise<Channel | null>;
+    addPassword(channelId: string, userData: any): Promise<Channel | null>;
+    updatePassword(channelId: string, userData: any): Promise<Channel | null>;
+    banUser(channelId: string, userId: string): Promise<Channel | null>;
+    unbanUser(channelId: string, userId: string): Promise<Channel | null>;
+    muteUser(channelId: string, userId: string): Promise<Channel | null>;
+    unmuteUser(channelId: string, userId: string): Promise<Channel | null>;
+    getChannelsWithUser(userId: string): Promise<Channel[] | null>;
+    getPublicChannels(): Promise<Channel[] | null>;
+    getChannels(): Promise<Channel[] | null>;
+    getChannel(userData: any): Promise<Channel | null>;
+    getUsersWithUsername(channelName: string): Promise<Channel[] | null>;
+    deleteChannel(channelId: string): Promise<Channel | null>;
+    removeUserFromGroup(channelId: string, userId: string): Promise<Channel | null>;
+    removeUserFromAdmins(channelId: string, userId: string): Promise<Channel | null>;
+    removePassword(channelId: string): Promise<Channel | null>;
+}
