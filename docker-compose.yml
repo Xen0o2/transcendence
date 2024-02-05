@@ -1,0 +1,65 @@
+version: '3'
+
+services:
+
+  dev:
+    container_name: dev
+    image: alpine
+    networks:
+      - transcendence
+
+  frontend:
+    container_name: frontend
+    build:
+      context: Front-end
+      dockerfile: Dockerfile
+    networks:
+      - transcendence
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+  backend:
+    container_name: backend
+    build:
+      context: Back-end
+      dockerfile: Dockerfile
+    networks:
+      - transcendence
+    restart: always
+    env_file: Back-end/.env
+    ports:
+      - "8080:8080"
+      - "80:80"
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    container_name: database
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: transcendencedb
+      POSTGRES_USER: kogbebou
+      POSTGRES_PASSWORD: kogbeboulebest
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d transcendencedb -U kogbebou" ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - transcendence
+    expose:
+      - "5432"
+
+networks:
+  transcendence:
+    driver: bridge
+
+volumes:
+  pgdata:
