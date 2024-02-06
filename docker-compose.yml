@@ -2,12 +2,6 @@ version: '3.8'
 
 name: transcendence
 services:
-  dev:
-    container_name: dev
-    image: alpine
-    networks:
-      - transcendence
-
   frontend:
     container_name: frontend
     build:
