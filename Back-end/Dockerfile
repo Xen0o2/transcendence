@@ -5,6 +5,9 @@ RUN apk update && \
     apk add nodejs npm && \
     apk add postgresql
 
+RUN mkdir /backend; \
+    chmod +rwx /backend
+WORKDIR /backend
 COPY . .
 
 COPY ./start.sh /start.sh

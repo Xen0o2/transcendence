@@ -3,7 +3,7 @@ export const color = {
   secondary: "#4A4A4A"
 };
 
-const DEFAULT_ADDRESS = "http://10.18.207.242"
+const DEFAULT_ADDRESS = "http://localhost"
 
 export const address = {
 	frontendRedirectURL: DEFAULT_ADDRESS,
@@ -11,5 +11,5 @@ export const address = {
 	backendURL: DEFAULT_ADDRESS,
 	backendPort: "8080",
 	socketURL: DEFAULT_ADDRESS,
-	socketPort: "80"
+	socketPort: "8000"
 };

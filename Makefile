@@ -10,6 +10,8 @@
 #                                                                              #
 # **************************************************************************** #
 
+all: start
+
 start:
 	@echo "Starting Transcendence"
 	@docker compose up -d
@@ -29,4 +31,6 @@ clean: stop
 	@docker volume prune -f --filter all=1
 	@echo "Transcendence cleaned"
 
-.PHONY: start stop up down
+re: clean start
+
+.PHONY: all start stop up down re
