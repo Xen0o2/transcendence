@@ -31,6 +31,7 @@ export interface User {
 	firstname: string;
 	lastname: string;
 	image: string;
+	mail: string | null;
 	friends: User[];
 	friendship1: Friendship[] | undefined;
 	friendship2: Friendship[] | undefined;

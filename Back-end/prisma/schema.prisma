@@ -15,6 +15,7 @@ model User {
 	login       	 String		 @unique
 	firstname    	 String
 	lastname    	 String
+	mail			 String?
 	image       	 String?
 	victory			 Int		  @default(0)
 	defeat			 Int	      @default(0)

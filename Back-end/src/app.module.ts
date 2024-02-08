@@ -13,6 +13,7 @@ import { ServeStaticModule } from "@nestjs/serve-static"
 
 import { AppGateway } from './app.gateway';
 import { ImagesController } from './images/images.controller';
+import { MailController } from './mail/mail.controller';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { ImagesController } from './images/images.controller';
       serveRoot: "/uploads"
     })
   ],
-  controllers: [AppController, UserController, ChannelController, FriendshipController, DmchannelController, ImagesController],
+  controllers: [AppController, UserController, ChannelController, FriendshipController, DmchannelController, ImagesController, MailController],
   providers: [AppService, ApiService, PrismaService, AppGateway],
 })
 

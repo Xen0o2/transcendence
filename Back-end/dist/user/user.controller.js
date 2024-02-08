@@ -84,11 +84,14 @@ let UserController = class UserController {
             const already = await this.user({ login: userData.username });
             if (already && already.id != userId)
                 return null;
-            const user = this.update({
+            let user = await this.user({ id: userId });
+            if (userData.username === "")
+                return user;
+            const updatedUser = await this.update({
                 data: { login: userData.username },
                 where: { id: userId }
             });
-            return user;
+            return updatedUser;
         }
         catch (error) {
             console.error(error);
@@ -127,7 +130,7 @@ let UserController = class UserController {
     }
     async getUser(userId) {
         try {
-            const user = this.user({ id: userId });
+            const user = await this.user({ id: userId });
             return user;
         }
         catch (error) {

@@ -25,12 +25,21 @@
     height: 30%;
     width: 80%;
     display: flex;
+    flex-direction: column;
+    gap: 20px;
     justify-content: space-around;
     align-items: center;
 }
 
+.inputCode {
+    display: flex;
+    justify-content: space-between;
+    height: 50px;
+    gap: 10px
+}
+
 .inputNumber{
-    height: 70%;
+    height: 100%;
     width: 50px;
     font-size: 30px;
     text-align: center;
@@ -49,6 +58,9 @@
     outline: none;
     cursor: pointer;
     font-size: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .button2fa:active{
@@ -59,6 +71,17 @@
     height: 40%;
     border:3px solid white;
     border-radius: 5px;
+}
+
+.input2fa {
+    font-size: 1.5rem;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+.input2fa:focus {
+    outline: none;
 }
 
 @media only screen and (max-width: 900px) {
@@ -98,6 +121,7 @@
         height: 30%;
         width: 100%;
         display: flex;
+        flex-direction: column;
         justify-content: space-around;
         align-items: center;
     }

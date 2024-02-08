@@ -19,7 +19,9 @@ export default function Header() {
 
   const navigate = useNavigate()
   const handleLogout = () => {
-    Cookies.remove("id")
+    Object.keys(Cookies.get()).forEach(function(cookieName) {
+      Cookies.remove(cookieName);
+    });
     navigate("/login")
     window.location.reload()
   };

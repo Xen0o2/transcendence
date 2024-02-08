@@ -21,6 +21,7 @@ const platform_express_1 = require("@nestjs/platform-express");
 const serve_static_1 = require("@nestjs/serve-static");
 const app_gateway_1 = require("./app.gateway");
 const images_controller_1 = require("./images/images.controller");
+const mail_controller_1 = require("./mail/mail.controller");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -36,7 +37,7 @@ exports.AppModule = AppModule = __decorate([
                 serveRoot: "/uploads"
             })
         ],
-        controllers: [app_controller_1.AppController, user_controller_1.UserController, channel_controller_1.ChannelController, friendship_controller_1.FriendshipController, dmchannel_controller_1.DmchannelController, images_controller_1.ImagesController],
+        controllers: [app_controller_1.AppController, user_controller_1.UserController, channel_controller_1.ChannelController, friendship_controller_1.FriendshipController, dmchannel_controller_1.DmchannelController, images_controller_1.ImagesController, mail_controller_1.MailController],
         providers: [app_service_1.AppService, api_service_1.ApiService, prisma_service_1.PrismaService, app_gateway_1.AppGateway],
     })
 ], AppModule);

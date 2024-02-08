@@ -167,6 +167,68 @@
   animation-duration: 11s;
 }
 
+.descriptionDoubleAuth {
+  color: white;
+  text-align: center;
+}
+
+.doubleAuthModal {
+  height: 400px;
+  width: 30%;
+  margin-top: 60px;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  flex-direction: column;
+  position: relative;
+  padding-top: 100px;
+  box-sizing: border-box;
+}
+
+.body2fa {
+  height: 30%;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login2fa {
+  height: 30%;
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.resend2fa {
+  color: white;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.resend2fa.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.loginButton2fa {
+  height: 50%;
+  width: 100%;
+  border:1px solid white;
+  border: none;
+  background-color: white;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+  font-size: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 @keyframes animate {
   0% {
     transform: translateY(0) rotate(0deg);
