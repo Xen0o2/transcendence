@@ -1,11 +1,13 @@
-import { User } from './user.class';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { User, UserStatus } from './user.class';
 
 export class Game {
+  users: User[];
   players: User[] = [];
 
   gameLoopInterval: NodeJS.Timeout | null = null;
 
-  property: any = {
+  property = {
     height: 850,
     width: 1200,
     ballRay: 10,
@@ -20,7 +22,7 @@ export class Game {
     ballPause: false,
   };
 
-  paddles: any = {
+  paddles = {
     speed: 10,
     width: 15,
     height: 100,
@@ -29,12 +31,14 @@ export class Game {
       y: this.property.height / 2 - 50,
       score: 0,
       userName: null,
+      height: undefined,
     },
     player2: {
       x: this.property.width - 15,
       y: this.property.height / 2 - 50,
       score: 0,
       userName: null,
+      height: undefined,
     },
   };
 
@@ -49,7 +53,7 @@ export class Game {
     ballStroke: 'black',
   };
 
-  bonus: any = {
+  bonus = {
     x: 0,
     y: 0,
     x2: 0,
@@ -68,20 +72,22 @@ export class Game {
   };
 
   io: any;
-  onStopCallback: ((arg: any) => void) | null = null;
+  onStopCallback: ((arg: string) => void) | null = null;
   socket: any;
 
   constructor(
     io: any,
     onStopCallback: ((arg: any) => void) | null = null,
-    socket: any,
+    private readonly prisma: PrismaService,
+    users: User[],
   ) {
     this.io = io;
     this.onStopCallback = onStopCallback;
-    this.socket = socket;
+    this.users = users;
   }
 
   startGameLoop(data: any) {
+    void data;
     this.property.statusGame = true;
     if (this.property.statusGame === true) {
       if (this.gameLoopInterval === null) {
@@ -96,15 +102,87 @@ export class Game {
     }
   }
 
-  stopGameLoop() {
+  async stopGameLoop() {
     this.property.statusGame = true;
+
+    if (this.players.length == 0) return;
+    for (const player of this.players) player.status = UserStatus.ONLINE;
+    for (const user of this.users)
+      this.io.to(user.id).emit(
+        'usersStatus',
+        this.users.map((user) => {
+          return { userId: user.ft_id, status: user.status };
+        }),
+      );
+
     this.players.forEach((user) => {
+      // ENVOIE LE SCORE A TOUT LE MONDE
       this.io.to(user.id).emit('score', this.paddles);
     });
 
     if (this.gameLoopInterval !== null) {
       clearInterval(this.gameLoopInterval);
       this.gameLoopInterval = null;
+
+      const match = await this.prisma.match.create({
+        data: {
+          user1id: this.players[0].ft_id,
+          user2id: this.players[1].ft_id,
+          scoreUser1: this.paddles.player1.score,
+          scoreUser2: this.paddles.player2.score,
+          winnerid:
+            this.paddles.player1.score == this.paddles.player2.score
+              ? null
+              : this.paddles.player1.score > this.paddles.player2.score
+                ? this.players[0].ft_id
+                : this.players[1].ft_id,
+        },
+      });
+
+      const experienceToAdd = 100; // level * 1000 / 3 pour passer un niveau
+      const user1 = await this.prisma.user.update({
+        data: {
+          victory: {
+            increment: Number(match.winnerid === this.players[0].ft_id),
+          },
+          defeat: {
+            increment: Number(match.winnerid === this.players[1].ft_id),
+          },
+          experience: {
+            increment: Number(match.winnerid === this.players[0].ft_id)
+              ? experienceToAdd * 2
+              : experienceToAdd / 2,
+          },
+        },
+        where: { id: this.players[0].ft_id },
+      });
+      if (user1.experience >= (user1.level * 1000) / 3)
+        await this.prisma.user.update({
+          data: { level: { increment: 1 }, experience: 0 },
+          where: { id: user1.id },
+        });
+      const user2 = await this.prisma.user.update({
+        data: {
+          victory: {
+            increment: Number(match.winnerid === this.players[1].ft_id),
+          },
+          defeat: {
+            increment: Number(match.winnerid === this.players[0].ft_id),
+          },
+          experience: {
+            increment: Number(match.winnerid === this.players[1].ft_id)
+              ? experienceToAdd * 2
+              : experienceToAdd / 2,
+          },
+        },
+        where: { id: this.players[1].ft_id },
+      });
+      if (user2.experience >= (user2.level * 1000) / 3)
+        await this.prisma.user.update({
+          data: { level: { increment: 1 }, experience: 0 },
+          where: { id: user2.id },
+        });
+
       if (this.onStopCallback !== null) {
         this.onStopCallback('timer');
       }
@@ -145,8 +223,8 @@ export class Game {
 
   InvisibleBallBonus() {
     this.bonus.BonusOn = true;
-    this.bonus.BallColor = this.rgba(0, 0, 0, 0);
-    this.bonus.BallStroke = this.rgba(0, 0, 0, 0);
+    this.ball.BallColor = this.rgba(0, 0, 0, 0);
+    this.ball.BallStroke = this.rgba(0, 0, 0, 0);
     this.bonus.InvisibleBall = true;
   }
 
@@ -158,11 +236,11 @@ export class Game {
 
   RandomYBonus() {
     this.ball.ballDirX =
-      1.2 * (this.property.height / 720) * this.property.LastedTouch;
+      1.2 * (this.property.height / 720) * this.property.lastedTouch;
     setTimeout(() => {
       if (this.bonus.RandomYEffect === true) {
         this.ball.ballDirX =
-          2.5 * (this.property.height / 720) * this.property.LastedTouch;
+          2.5 * (this.property.height / 720) * this.property.lastedTouch;
         this.ball.ballDirY = this.getRandomInt(-10, 10);
       }
     }, 500);
@@ -176,12 +254,12 @@ export class Game {
 
   PaddleNerfBonus() {
     this.bonus.BonusOn = true;
-    if (this.property.LastedTouch === 1) {
+    if (this.property.lastedTouch === 1) {
       this.paddles.player2.height =
         this.paddles.height - this.paddles.height / 4;
       this.paddles.player1.height =
         this.paddles.height + this.paddles.height / 6;
-    } else if (this.property.LastedTouch === -1) {
+    } else if (this.property.lastedTouch === -1) {
       this.paddles.player1.height =
         this.paddles.height - this.paddles.height / 4;
       this.paddles.player2.height =
@@ -199,7 +277,7 @@ export class Game {
     }
     this.ball.BallVelocity = 3;
     this.bonus.TeleportEffect = false;
-    this.bonus.BonusType = -1;
+    this.bonus.bonusType = -1;
   }
 
   ResetBonusStats(type: number) {
@@ -223,16 +301,16 @@ export class Game {
   }
 
   LaunchBonus() {
-    if (this.bonus.BonusType === 0) this.InvisibleBallBonus();
-    else if (this.bonus.BonusType === 1)
+    if (this.bonus.bonusType === 0) this.InvisibleBallBonus();
+    else if (this.bonus.bonusType === 1)
       this.SpeedBonus(); // a opti
-    else if (this.bonus.BonusType === 2)
+    else if (this.bonus.bonusType === 2)
       // a opti
       this.TeleportBonus(); // a opti
-    else if (this.bonus.BonusType === 3)
+    else if (this.bonus.bonusType === 3)
       // a opti
       this.PaddleNerfBonus(); // a opti
-    else if (this.bonus.BonusType === 4)
+    else if (this.bonus.bonusType === 4)
       // a opti
       this.RandomYBonus(); // a opti
   }
@@ -249,7 +327,7 @@ export class Game {
       this.bonus.BonusIsHere = false;
       this.LaunchBonus();
     } else if (
-      this.bonus.teleportEffect &&
+      this.bonus.TeleportEffect &&
       this.ball.y + this.ball.ray >= this.bonus.y2 - this.ball.ray &&
       this.ball.y - this.ball.ray <= this.bonus.y2 + this.bonus.ray &&
       this.ball.x + this.ball.ray >= this.bonus.x2 - this.bonus.ray &&
@@ -281,8 +359,8 @@ export class Game {
     ) {
       this.BallMovement(this.paddles.player1);
       this.property.lastedTouch = 1;
-      if (this.bonus.Invisibility === true || this.bonus.SpeedEffect === true)
-        this.ResetBonusStats(this.bonus.BonusType);
+      if (this.bonus.InvisibleBall === true || this.bonus.SpeedEffect === true)
+        this.ResetBonusStats(this.bonus.bonusType);
     } else if (
       dx2 <= this.property.ballRay + this.paddles.width / 2 &&
       dy2 <= this.paddles.height / 2 + this.property.ballRay
@@ -290,8 +368,8 @@ export class Game {
       this.BallMovement(this.paddles.player2);
       this.ball.ballDirX *= -1;
       this.property.lastedTouch = -1;
-      if (this.bonus.Invisibility === true || this.bonus.SpeedEffect === true)
-        this.ResetBonusStats(this.bonus.BonusType);
+      if (this.bonus.InvisibleBall === true || this.bonus.SpeedEffect === true)
+        this.ResetBonusStats(this.bonus.bonusType);
     }
   }
 
@@ -397,24 +475,10 @@ export class Game {
     }
   }
 
-  startGameTimer() {
-    this.property.gameTimer = setInterval(() => {
-      this.property.gameTime += 1;
-    }, 1000);
-  }
-
-  stopGameTimer() {
-    if (this.property.gameTimer !== null) {
-      clearInterval(this.property.gameTimer);
-      this.property.gameTimer = null;
-      this.property.gameTime = 0;
-    }
-  }
-
   updateCountdown() {
     if (this.property.countdown > 0) {
       this.property.countdown -= 1;
-      if (this.property.countdown === 0) {
+      if (this.property.countdown === 0 && this.property.statusGame) {
         // Le compte à rebours est terminé, vous pouvez ajouter ici le code à exécuter à la fin du timer.
         this.stopGameLoop();
       }

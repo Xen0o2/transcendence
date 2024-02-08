@@ -116,6 +116,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
           this.server,
           () => this.handleStop(client, 'jsp'),
           this.prisma,
+          this.users,
         );
         availableGameId = this.generateUniqueId();
         this.games[availableGameId] = newGame;

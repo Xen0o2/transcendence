@@ -3,7 +3,7 @@ export const color = {
   secondary: "#4A4A4A"
 };
 
-const DEFAULT_ADDRESS = "http://localhost"
+const DEFAULT_ADDRESS = "http://10.18.207.139"
 
 export const address = {
 	frontendRedirectURL: DEFAULT_ADDRESS,

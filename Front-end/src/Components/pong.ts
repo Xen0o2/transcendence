@@ -396,8 +396,6 @@ export default function pong(id:any, socketID:any)
     if (BonusStatus === false || BonusIsHere === true || BonusOn === true)
       return ;
 
-    BonusPos.BonusType = getRandomInt(0, 4);
-
     if (BonusPos.BonusType === 0)
     {
       PowerUp.src = Invisibility;
