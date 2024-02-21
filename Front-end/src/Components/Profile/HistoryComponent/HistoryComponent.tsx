@@ -24,7 +24,7 @@ export default function HistoryComponent() {
 				setLoadingMatch(true)
 				let response = await axios.get(`${API_BASE_URL}/user/${userId}`)
 				setUser(response.data)
-				setMatches([...response.data.matches1, ...response.data.matches2].sort((match1: Match, match2: Match) => {
+				setMatches([...response.data.matches1, ...response.data.matches2].sort((match2: Match, match1: Match) => {
 					return new Date(match1.createdAt).getTime() - new Date(match2.createdAt).getTime()
 				}))
 				setLoadingMatch(false)
@@ -76,7 +76,7 @@ export default function HistoryComponent() {
 									<td>{match.scoreUser2}</td>
 								</tr>
 							</table>
-							<p className="pHistory">{match.createdAt.match(/(\d{4}-\d{2}-\d{2})/)?.[1]?.split('-').reverse().join('-')}</p>
+							<p className="pHistory">{match.createdAt.match(/(\d{4}-\d{2}-\d{2})/)?.[1]?.split('-').reverse().join(' / ')}</p>
 						</div>
 					))}
 				</div>

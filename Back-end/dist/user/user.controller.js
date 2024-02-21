@@ -84,9 +84,8 @@ let UserController = class UserController {
             const already = await this.user({ login: userData.username });
             if (already && already.id != userId)
                 return null;
-            let user = await this.user({ id: userId });
             if (userData.username === "")
-                return user;
+                return { error: "Already exist" };
             const updatedUser = await this.update({
                 data: { login: userData.username },
                 where: { id: userId }
@@ -96,6 +95,16 @@ let UserController = class UserController {
         catch (error) {
             console.error(error);
             throw new Error("Erreur lors de la mise à jour du pseudo");
+        }
+    }
+    async getFriends(userId) {
+        try {
+            const user = await this.user({ id: userId });
+            return user.friends;
+        }
+        catch (error) {
+            console.error(error);
+            throw new Error("Erreur lors de la récupération de la liste d'ami");
         }
     }
     async getOtherUsers(userId) {
@@ -240,6 +249,13 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "changeUsername", null);
+__decorate([
+    (0, common_1.Get)(":userId/friends"),
+    __param(0, (0, common_1.Param)("userId")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getFriends", null);
 __decorate([
     (0, common_1.Get)("otherUsers/:userId"),
     __param(0, (0, common_1.Param)("userId")),

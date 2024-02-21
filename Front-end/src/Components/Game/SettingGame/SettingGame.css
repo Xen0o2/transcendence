@@ -13,7 +13,89 @@
     z-index: 3;
 }
 
-.ButtonSettingGame{
+.containerSettingInvitationReceive {
+    background-color: white;
+    height: 50%;
+    width: 45%;
+    position: absolute;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 3;
+}
+
+.inviterProfilePic {
+    height: 100px;
+    aspect-ratio: 1 / 1;
+    border-radius: 100px;
+    margin-bottom: 10px;
+}
+
+.inviterUsername {
+    margin: 0;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+
+.invitationCancel {
+    padding-inline: 50px;
+    padding-block: 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.invitationDescription {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.invitationButtons {
+    margin-top: 30px;
+    display: flex;
+    gap: 10px;
+}
+
+.buttonStartGame {
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    padding-inline: 60px;
+    padding-block: 15px;
+    cursor: pointer;
+}
+
+.invitationButtonAccept {
+    background-color: green;
+    color: white;
+    padding-inline: 50px;
+    padding-block: 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.invitationButtonDecline {
+    background-color: #ff5a5a;
+    color: white;
+    padding-inline: 50px;
+    padding-block: 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.noFriendAvailable {
+    text-align: center;
+}
+
+.ButtonSettingGame {
     height: 15%;
     width: 70%;
     cursor: pointer;
@@ -68,16 +150,21 @@
     background-color: #4A4A4A;
     font-size: 15px;
     color: white;
-
-   
 }
 
-.buttonFriendSettingGame{
+.friendProfilePic {
+    height: 40px;
+    border-radius: 100%;
+    margin: 0;
+}
+
+.buttonFriendSettingGame {
     height: 70%;
     width: 40%;
     cursor: pointer;
     border: none;
     border-radius: 5px;
+    background-color: white;
 }
 
 .buttonFriendSettingGame:active{
@@ -177,7 +264,6 @@
     height: 70%;
     width: 20%;
     border-radius: 5px;
-    background-color: #4A4A4A;
     color: white;
     border: none;
     outline: none;

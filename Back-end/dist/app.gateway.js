@@ -20,11 +20,15 @@ let AppGateway = class AppGateway {
         this.prisma = prisma;
         this.userGameMap = {};
         this.users = [];
-        this.games = [];
+        this.invitations = [];
+        this.games = {};
     }
     handleConnection(client) {
-        let ft_id = client.handshake.query.id;
-        let login = client.handshake.query.login;
+        const ft_id = client.handshake.query.id;
+        const login = client.handshake.query.login;
+        const alreadyLogin = this.users.find(socketUser => socketUser.ft_id === ft_id);
+        if (alreadyLogin)
+            return this.sendMessageToClient(client.id, "alreadyLoggedIn", {});
         console.log(`Now online : ${login}`);
         const user = new user_class_1.User(client.id, ft_id, login, 'none');
         this.users.push(user);
@@ -34,30 +38,31 @@ let AppGateway = class AppGateway {
             }));
     }
     handleDisconnect(client) {
-        const index = this.users.findIndex(u => u.id === client.id);
-        if (index !== -1) {
-            const disconnectedUser = this.users.splice(index, 1)[0];
-            for (let user of this.users)
-                this.sendMessageToClient(user.id, "usersStatus", this.users.map(user => {
-                    return { userId: user.ft_id, status: user.status };
-                }));
-            console.log(`Now offline : ${disconnectedUser.login}`);
-            const gameId = Object.keys(this.games).find(gameId => this.games[gameId].players.some(player => player.id === disconnectedUser.id));
-            if (gameId) {
-                clearInterval(this.games[gameId].intervalTimer);
-                clearTimeout(this.games[gameId].timeoutId);
-                const game = this.games[gameId];
-                game.players = game.players.filter(player => player.id !== disconnectedUser.id);
-                if (game.players.length === 0) {
-                    delete this.games[gameId];
-                    console.log(`Game ${gameId} removed because no players left.`);
-                }
-                if (game.property.statusGame) {
-                    this.handleStop(client, "playerLeft");
-                    console.log(`Game ${gameId} removed because player left.`);
-                }
-                this.sendMessageToGame(game, "returnToMenu", "playerLeft");
+        const socketUser = this.users.find(socketUser => socketUser.id === client.id);
+        if (!socketUser)
+            return;
+        this.users.splice(this.users.indexOf(socketUser), 1);
+        for (let user of this.users)
+            this.sendMessageToClient(user.id, "usersStatus", this.users.map(user => {
+                return { userId: user.ft_id, status: user.status };
+            }));
+        this.invitations.splice(this.invitations.findIndex(invitation => invitation.inviterId == socketUser.ft_id || invitation.invitedId == socketUser.ft_id), 1);
+        console.log(`Now offline : ${socketUser.login}`);
+        const gameId = Object.keys(this.games).find(gameId => this.games[gameId].players.some(player => player.id === socketUser.id));
+        if (gameId) {
+            clearInterval(this.games[gameId].property.intervalTimer);
+            clearTimeout(this.games[gameId].property.timeoutId);
+            const game = this.games[gameId];
+            game.players = game.players.filter(player => player.id !== socketUser.id);
+            if (game.players.length === 0) {
+                delete this.games[gameId];
+                console.log(`Game ${gameId} removed because no players left.`);
             }
+            if (game.property.statusGame) {
+                this.handleStop(client, "playerLeft");
+                console.log(`Game ${gameId} removed because player left.`);
+            }
+            this.sendMessageToGame(game, "returnToMenu", "playerLeft");
         }
     }
     handleInfosUser(client, data) {
@@ -66,8 +71,8 @@ let AppGateway = class AppGateway {
             user.login = data.name;
         }
     }
-    handleMatchmakingEvent(client) {
-        console.log(`Received 'matchmaking' event from client: ${client.id}`);
+    async handleMatchmakingEvent(client) {
+        console.log(`Received 'matchmaking' event from client: ${this.users.find(e => e.id == client.id).login}`);
         const user = this.users.find(u => u.id === client.id);
         let sameUser = false;
         if (user) {
@@ -103,29 +108,32 @@ let AppGateway = class AppGateway {
             }
             if (this.games[availableGameId].players.length === 2) {
                 const game = this.games[availableGameId];
-                const usersInfo = game.players.map(player => ({ id: player.id, username: player.login }));
-                this.sendMessageToGame(game, 'userList', usersInfo);
+                const user1 = await this.prisma.user.findUnique({ where: { id: game.players[0].ft_id } });
+                const user2 = await this.prisma.user.findUnique({ where: { id: game.players[1].ft_id } });
+                this.sendMessageToGame(game, 'userList', [user1, user2]);
             }
         }
     }
     handlePlayEvent(client) {
         const gameId = this.userGameMap[client.id];
         let Time = 5;
-        if (this.games[gameId].intervalTimer) {
-            clearInterval(this.games[gameId].intervalTimer);
+        if (this.games[gameId].property.intervalTimer) {
+            clearInterval(this.games[gameId].property.intervalTimer);
         }
-        if (this.games[gameId].timeoutId) {
-            clearTimeout(this.games[gameId].timeoutId);
+        if (this.games[gameId].property.timeoutId) {
+            clearTimeout(this.games[gameId].property.timeoutId);
         }
         this.sendMessageToGame(this.games[gameId], "timeBeforePlay", Time);
-        this.games[gameId].intervalTimer = setInterval(() => {
+        this.games[gameId].property.intervalTimer = setInterval(() => {
             Time -= 1;
             this.sendMessageToGame(this.games[gameId], "timeBeforePlay", Time);
         }, 1000);
-        this.games[gameId].timeoutId = setTimeout(() => {
+        this.games[gameId].property.timeoutId = setTimeout(() => {
             if (this.games[gameId]) {
                 if (this.games[gameId]?.players.length === 2) {
                     this.games[gameId].startGameLoop(() => this.handleStop(client, "jsp"));
+                    this.sendMessageToClient(this.games[gameId].players[0].id, "drawLeft", {});
+                    this.sendMessageToClient(this.games[gameId].players[1].id, "drawRight", {});
                     this.sendMessageToGame(this.games[gameId], "partieLaunch", "go");
                     for (let player of this.games[gameId]?.players)
                         this.users.find(socketUser => socketUser.id == player.id).status = user_class_1.UserStatus.PLAYING;
@@ -135,30 +143,32 @@ let AppGateway = class AppGateway {
                         }));
                 }
             }
-            clearInterval(this.games[gameId].intervalTimer);
+            clearInterval(this.games[gameId].property.intervalTimer);
         }, 5000);
     }
     handleLeftMatchMaking(client) {
         const gameId = this.userGameMap[client.id];
-        if (gameId) {
-            clearInterval(this.games[gameId].intervalTimer);
-            clearTimeout(this.games[gameId].timeoutId);
-            const game = this.games[gameId];
-            const playerIndex = game.players.findIndex(player => player.id === client.id);
-            const otherPlayerIndex = playerIndex === 0 ? 1 : 0;
-            const otherPlayer = game.players[otherPlayerIndex];
-            if (otherPlayer) {
-                this.sendMessageToClient(otherPlayer.id, "returnToMenu", "playerLeft");
-            }
-            if (playerIndex !== -1) {
-                const leftPlayer = game.players.splice(playerIndex, 1)[0];
-                delete this.userGameMap[client.id];
-                console.log("delete this user", client.id);
-            }
-            if (game.players.length === 0) {
-                delete this.games[gameId];
-                console.log(`Le jeu ${gameId} a été supprimé car il ne reste plus de joueurs.`);
-            }
+        if (!gameId || !this.games[gameId])
+            return;
+        clearInterval(this.games[gameId].property.intervalTimer);
+        clearTimeout(this.games[gameId].property.timeoutId);
+        const game = this.games[gameId];
+        const playerIndex = game.players.findIndex(player => player.id === client.id);
+        const otherPlayerIndex = playerIndex === 0 ? 1 : 0;
+        const otherPlayer = game.players[otherPlayerIndex];
+        console.log(otherPlayer, otherPlayerIndex);
+        if (otherPlayer) {
+            console.log("envoie à", otherPlayer.login);
+            this.sendMessageToClient(otherPlayer.id, "returnToMenu", "playerLeft");
+        }
+        if (playerIndex !== -1) {
+            const leftPlayer = game.players.splice(playerIndex, 1)[0];
+            delete this.userGameMap[client.id];
+            console.log("delete this user", client.id);
+        }
+        if (game.players.length === 0) {
+            delete this.games[gameId];
+            console.log(`Le jeu ${gameId} a été supprimé car il ne reste plus de joueurs.`);
         }
     }
     handleStop(client, infos) {
@@ -538,15 +548,74 @@ let AppGateway = class AppGateway {
             throw new Error("Erreur lors de l'envoie d'une demande d'ami");
         }
     }
+    async getGameInvitation(client, data) {
+        const invitation = this.invitations.find(invitation => invitation.inviterId === data.userId || invitation.invitedId === data.userId);
+        if (!invitation)
+            return;
+        const inviter = await this.prisma.user.findUnique({ where: { id: invitation.inviterId } });
+        const invited = await this.prisma.user.findUnique({ where: { id: invitation.invitedId } });
+        this.sendMessageToClient(client.id, "gameInvitationList", { inviter, invited });
+    }
+    async gameInvitationSent(client, data) {
+        const userInviter = this.users.find(e => e.ft_id === data.inviterId);
+        const userInvited = this.users.find(e => e.ft_id === data.invitedId);
+        if (!userInvited)
+            return this.sendMessageToClient(userInviter.id, "userInvitedIsOffline", {});
+        const alreadyInvited = this.invitations.find(invitation => invitation.invitedId === data.invitedId);
+        if (alreadyInvited)
+            return this.sendMessageToClient(userInviter.id, "userAlreadyInvited", {});
+        const alreadyInvite = this.invitations.find(invitation => invitation.inviterId === data.invitedId);
+        if (alreadyInvite)
+            return this.sendMessageToClient(userInviter.id, "userAlreadyInviter", {});
+        if (!userInviter || !userInvited)
+            return;
+        const inviter = await this.prisma.user.findUnique({ where: { id: data.inviterId } });
+        if (!inviter)
+            return;
+        this.invitations.push({ inviterId: data.inviterId, invitedId: data.invitedId });
+        this.sendMessageToClient(userInvited.id, "gameInvitationReceived", inviter);
+    }
+    async gameInvitationCancel(client, data) {
+        this.invitations.splice(this.invitations.findIndex(invitation => invitation.inviterId == data.inviterId), 1);
+        const userInvited = this.users.find(socketUser => socketUser.ft_id == data.invitedId);
+        if (userInvited)
+            this.sendMessageToClient(userInvited.id, "gameInvitationCancelled", {});
+    }
+    async gameInvitationAccept(client, data) {
+        this.invitations.splice(this.invitations.findIndex(invitation => invitation.inviterId == data.inviterId), 1);
+        const socketUserInviter = this.users.find(socketUser => socketUser.ft_id === data.inviterId);
+        const socketUserInvited = this.users.find(socketUser => socketUser.ft_id === data.invitedId);
+        const userInviter = await this.prisma.user.findUnique({ where: { id: socketUserInviter.ft_id } });
+        const userInvited = await this.prisma.user.findUnique({ where: { id: socketUserInvited.ft_id } });
+        const game = new game_class_1.Game(this.server, () => this.handleStop(client, "jsp"), this.prisma, this.users);
+        const gameId = this.generateUniqueId();
+        socketUserInviter.side = "players1";
+        socketUserInvited.side = "players2";
+        game.paddles.player1.userName = socketUserInviter.login;
+        game.paddles.player2.userName = socketUserInvited.login;
+        game.players.push(socketUserInviter);
+        game.players.push(socketUserInvited);
+        this.userGameMap[socketUserInviter.id] = gameId;
+        this.userGameMap[socketUserInvited.id] = gameId;
+        this.games[gameId] = game;
+        for (let id of [socketUserInviter.id, socketUserInvited.id])
+            this.sendMessageToClient(id, "userList", [userInviter, userInvited]);
+    }
+    async gameInvitationDecline(client, data) {
+        this.invitations.splice(this.invitations.findIndex(invitation => invitation.inviterId == data.inviterId), 1);
+        const userInviter = this.users.find(socketUser => socketUser.ft_id == data.inviterId);
+        console.log(userInviter);
+        if (userInviter)
+            this.sendMessageToClient(userInviter.id, "gameInvitationDeclined", {});
+    }
     sendMessageToClient(clientId, event, message) {
         this.server.to(clientId).emit(event, message);
     }
     sendMessageToGame(game, where, object) {
-        if (game) {
+        if (game)
             game.players.forEach(player => {
                 this.server.to(player.id).emit(where, object);
             });
-        }
     }
     removeGame(clientId) {
         const gameId = this.userGameMap[clientId];
@@ -572,7 +641,7 @@ __decorate([
     (0, websockets_1.SubscribeMessage)('matchmaking'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [socket_io_1.Socket]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], AppGateway.prototype, "handleMatchmakingEvent", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('play'),
@@ -748,6 +817,36 @@ __decorate([
     __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
     __metadata("design:returntype", Promise)
 ], AppGateway.prototype, "removeFriend", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)("getGameInvitation"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", Promise)
+], AppGateway.prototype, "getGameInvitation", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)("gameInvitationSent"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", Promise)
+], AppGateway.prototype, "gameInvitationSent", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)("gameInvitationCancel"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", Promise)
+], AppGateway.prototype, "gameInvitationCancel", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)("gameInvitationAccept"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", Promise)
+], AppGateway.prototype, "gameInvitationAccept", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)("gameInvitationDecline"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", Promise)
+], AppGateway.prototype, "gameInvitationDecline", null);
 exports.AppGateway = AppGateway = __decorate([
     (0, websockets_1.WebSocketGateway)(Number(process.env.SOCKET_PORT)),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])

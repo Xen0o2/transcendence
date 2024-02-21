@@ -53,10 +53,15 @@
   margin: none;
   padding: 0;
 }
-.nameBubble{
+.nameBubble {
   margin: 0px;
   font-size: 10px;
   height: 10px;
   color: black;
+  text-decoration: none;
   margin-bottom: 5px;
+}
+
+.nameBubble:hover {
+  text-decoration: underline;
 }

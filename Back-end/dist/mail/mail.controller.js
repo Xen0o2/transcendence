@@ -44,7 +44,7 @@ let MailController = class MailController {
                 text: code,
             };
             codes[userId] = code;
-            const response = await transporter.sendMail(mailOptions);
+            await transporter.sendMail(mailOptions);
         }
         catch (error) {
             console.error(error);

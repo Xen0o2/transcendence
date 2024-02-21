@@ -26,9 +26,10 @@ import HistoryComponent from "./Components/Profile/HistoryComponent/HistoryCompo
 import FriendComponent from "./Components/Profile/FriendComponent/FriendComponent";
 import Players from "./Components/Public/Players/Players";
 import Channels from "./Components/Public/Channels/Channels";
+import AlreadyLoggedIn from "./Components/AlreadyLoggedIn/AlreadyLoggedIn";
 
 import { SocketProvider } from './ContextSocket';
-import { NotificationProvider, useNotification } from "./ContextNotification";
+import { NotificationProvider } from "./ContextNotification";
 
 import { address } from "./config";
 import { User } from "./Components/Chat/Chat";
@@ -101,19 +102,22 @@ const ChannelsComponent = () => (
 
 
 function App() {
-  let [socketState, setSocketState] = useState<any>(null);
-  let [errored, setErrored] = useState(false);
-  let [loading, setLoading] = useState(false);
-  let [id, setId] = useState(Cookies.get("id"))
-  let [name, setName] = useState(Cookies.get("login"))
-  let [user, setUser] = useState<User>();
-  let [update, setUpdate] = useState(false);
+  const [socketState, setSocketState] = useState<any>(null);
+  const [errored, setErrored] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [id, setId] = useState(Cookies.get("id"))
+  const [name, setName] = useState(Cookies.get("login"))
+  const [user, setUser] = useState<User>();
+  const [update, setUpdate] = useState(false);
+  const [alreadyLoggedIn, setAlreadyLoggedIn] = useState(false);
 
   let code = new URLSearchParams(window.location.search).get("code");
 
   useEffect(() => {
     
     if (name && Cookies.get("2fa")) {
+      if (socketState)
+        return
       const socket = io(address.socketURL + ":" + address.socketPort, {
         withCredentials: true, 
         transports: ['websocket'],
@@ -123,6 +127,10 @@ function App() {
       socket.on('connect', () => {
         console.log('Connected to server');
       });
+
+      socket.on("alreadyLoggedIn", () => {
+        setAlreadyLoggedIn(true);
+      })
       setSocketState(socket);
     }
     
@@ -164,11 +172,9 @@ function App() {
         if (!response.data.mail) 
           Cookies.set("2fa", "OK")
         if (!response.data && Cookies.get("id")) {
-          Cookies.remove("id")
-          Cookies.remove("login")
-          Cookies.remove("image")
-          Cookies.remove("firstname")
-          Cookies.remove("lastname")
+          Object.keys(Cookies.get()).forEach(function(cookieName) {
+            Cookies.remove(cookieName);
+          });
         }
       } catch(error) {
         console.error(error)
@@ -183,26 +189,28 @@ function App() {
       <NotificationProvider >
       <Router>
         {(Cookies.get("id") && Cookies.get("2fa")) ?
-          <Routes>
-            <Route path="/login" element={<GameComponent />} />
-            <Route path="/" element={<GameComponent />} />
-            <Route path="/game" element={<GameComponent />} />
-            <Route path="/username" element={<PseudoComponent />} />
-            <Route path="/profile">
-              <Route path=":userId/profile" element={<ProfileWithHeaderComponent />} />
-              <Route path=":userId/history" element={<HistoryWithHeaderComponent />} />
-              <Route path=":userId/friends" element={<FriendsWithHeaderComponent />} />
-            </Route>
-            <Route path="/public">
-              <Route path="players" element={<PlayersComponent />} />
-              <Route path="channels" element={<ChannelsComponent />} />
-            </Route>
-            <Route path="/about" element={<AboutComponent />} />
-            <Route path="/2fa"  element={<DoubleAuthComponent />} />
-          </Routes> :
-          (Cookies.get("id") && !Cookies.get("2fa") && !errored && user && user.mail) ?
-            <TwoFactorAuth user={user} setUpdate={setUpdate} /> :
-            <Login error={errored} loading={loading} />
+          alreadyLoggedIn ?
+            <AlreadyLoggedIn /> :
+            <Routes>
+              <Route path="/login" element={<GameComponent />} />
+              <Route path="/" element={<GameComponent />} />
+              <Route path="/game" element={<GameComponent />} />
+              <Route path="/username" element={<PseudoComponent />} />
+              <Route path="/profile">
+                <Route path=":userId/profile" element={<ProfileWithHeaderComponent />} />
+                <Route path=":userId/history" element={<HistoryWithHeaderComponent />} />
+                <Route path=":userId/friends" element={<FriendsWithHeaderComponent />} />
+              </Route>
+              <Route path="/public">
+                <Route path="players" element={<PlayersComponent />} />
+                <Route path="channels" element={<ChannelsComponent />} />
+              </Route>
+              <Route path="/about" element={<AboutComponent />} />
+              <Route path="/2fa"  element={<DoubleAuthComponent />} />
+            </Routes> :
+            (Cookies.get("id") && !Cookies.get("2fa") && !errored && user && user.mail) ?
+              <TwoFactorAuth user={user} setUpdate={setUpdate} /> :
+              <Login error={errored} loading={loading} />
         
         }
       </Router>

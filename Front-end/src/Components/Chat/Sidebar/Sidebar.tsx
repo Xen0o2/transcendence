@@ -5,20 +5,29 @@ import { FaUsers } from "react-icons/fa";
 import { Channel, DMChannel } from "../Chat";
 import Cookies from "js-cookie";
 import Loader from "../../Loader/Loader";
+import { Page } from "../../Game/Game";
+
+interface sidebarProps {
+    showAddSettings   : boolean,
+    setShowAddSettings: Dispatch<SetStateAction<boolean>>,
+    selectedChat      : string,
+    setSelectedChat   : Dispatch<SetStateAction<string>>,
+    channels          : Channel[],
+    setChannels       : Dispatch<SetStateAction<Channel[]>>,
+    DMChannels        : DMChannel[],
+    setDMChannels     : Dispatch<SetStateAction<DMChannel[]>>,
+    closeAllWindows   : () => void,
+    loadingChannels   : boolean
+}
 
 export default function Sidebar(
-    {showAddSettings, setShowAddSettings,
-     selectedChat, setSelectedChat,
-     channels, setChannels,
-     DMChannels, setDMChannels,
-     closeAllWindows, loadingChannels
-    }: 
-    {showAddSettings: boolean, setShowAddSettings: Dispatch<SetStateAction<boolean>>,
-     selectedChat: string, setSelectedChat: Dispatch<SetStateAction<string>>,
-     channels: Channel[], setChannels: Dispatch<SetStateAction<Channel[]>>,
-     DMChannels: DMChannel[], setDMChannels: Dispatch<SetStateAction<DMChannel[]>>,
-     closeAllWindows: () => void, loadingChannels: boolean
-    }){
+    {
+        showAddSettings, setShowAddSettings,
+        selectedChat, setSelectedChat,
+        channels, setChannels,
+        DMChannels, setDMChannels,
+        closeAllWindows, loadingChannels
+    }: sidebarProps){
 
 
     const openAddSettings = () => {
@@ -39,7 +48,7 @@ export default function Sidebar(
                 {DMChannels.map((DMChannel: DMChannel, index) => (
                     <div className="containerCircleChat" key={index}>
                         <div className="circleChat" onClick={() => { changeChat(DMChannel.id); }}>
-                            <img className="profilePicChannel" style={{ border: selectedChat === DMChannel.id ? "2px solid #C4C4C4" : "" }} src={DMChannel.user1.id === Cookies.get("id") ? DMChannel.user2.image : DMChannel.user1.image} alt="Utilisateur"/>
+                            <img className="profilePicChannel" style={{ aspectRatio: "1/1", border: selectedChat === DMChannel.id ? "2px solid #C4C4C4" : "" }} src={DMChannel.user1.id === Cookies.get("id") ? DMChannel.user2.image : DMChannel.user1.image} alt="Utilisateur"/>
                         </div>
                     </div>
                 ))}

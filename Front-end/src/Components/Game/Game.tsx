@@ -1,37 +1,44 @@
 import "./Game.css";
-import React, { useRef, useEffect, useState} from "react";
+import { useRef, useEffect, useState } from "react";
 
 import { useSocket } from "../../ContextSocket";
 
 import { color } from "../../config";
-import Chat from "../Chat/Chat";
+import Chat, { User } from "../Chat/Chat";
 import pong from "../pong";
 import SettingGame from "./SettingGame/SettingGame";
 import Truck from "../Animations/Truck/Truck";
 
 import { IoSettingsOutline } from "react-icons/io5";
 
+export enum Page {
+  DEFAULT_PAGE = 0,
+  INVITE_A_FRIEND = 1,
+  MATCHMAKING = 2,
+  GAME_SCORE = 3,
+  WAITING_FOR_FRIEND = 4,
+  INVITATION_RECEIVED = 5
+}
+
 export default function Game() {
 
+  const socket = useSocket();
   const pongCanvasRef = useRef<HTMLCanvasElement>(null);
+
+
+  const [map, setMap] = useState(4);
+  const [play, setPlay] = useState(false);
+  const [score, setScore] = useState({ score1: 0, score2: 0 });
+  const [imQuit, setImQuit] = useState(false);
+  const [inviter, setInviter] = useState<User | null>(null);
+  const [invited, setInvited] = useState<User | null>(null);
+  const [players, setPlayers] = useState({ player1: "", player2: "" });
+  const [leftGame, setLeftGame] = useState(false);
   const [pongGame, setPongGame] = useState<any>(null);
   const [showWindow, setShowWindow] = useState(true); // afficher setting
-  const socket = useSocket();
+  const [pageSetting, setPageSetting] = useState<Page>(Page.DEFAULT_PAGE);
   const [canvasMesure, setCanvasMesure] = useState({ width: 0, height: 0 });
   const [showSettingPong, setShowSettingPong] = useState(false);
-  const [play, setPlay] = useState(false);
-  const [leftGame, setLeftGame] = useState(false);
-  const [imQuit, setImQuit] = useState(false);
-  const [score, setScore] = useState({
-    score1:0,
-    score2:0,
-})
-  const [page, setPage] = useState(0);
-  const [map, setMap] = useState(4);
-  const [players, setPlayers] = useState<any>({
-    player1: "",
-    player2: ""
-  })
 
   const playGame = () => {
     if (socket){
@@ -95,11 +102,13 @@ export default function Game() {
       })
 
       socket.on('stop', (message : string) => {
+        setInvited(null);
+        setInviter(null);
         setShowWindow(true);
         setLeftGame(true);
         setPlay(false);
         setMap(4);
-		setPage(3);
+		    setPageSetting(3);
       })
 
       socket.on('score', (message : any) => {
@@ -138,7 +147,7 @@ export default function Game() {
 			<p className="pSettingPong">Setting pong</p>
           <button onClick={quitGame} className="buttonQuitPong">Quit</button>
         </div>}
-         { showWindow && <SettingGame setShowWindow={setShowWindow} playGame={playGame} socket={socket} leftGame={leftGame} score={score} page={page} setMap={setMap} players={players}/> }
+         { showWindow && <SettingGame pageSetting={pageSetting} setPageSetting={setPageSetting} invited={invited} setInvited={setInvited} inviter={inviter} setInviter={setInviter} setShowWindow={setShowWindow} playGame={playGame} socket={socket} leftGame={leftGame} score={score} setMap={setMap} players={players}/> }
           <canvas
             id="pong"
             ref={pongCanvasRef}
@@ -148,7 +157,7 @@ export default function Game() {
           ></canvas>
           { showWindow &&<Truck />}
         </div>
-        <Chat />
+        <Chat pageSetting={pageSetting} setPageSetting={setPageSetting} invited={invited} setInvited={setInvited} inviter={inviter} setInviter={setInviter}/>
       </div>
     </div>
   );

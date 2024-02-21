@@ -75,7 +75,7 @@ class Game {
         this.players.forEach(user => {
             this.io.to(user.id).emit('score', this.paddles);
         });
-        if (this.gameLoopInterval !== null) {
+        if (this.gameLoopInterval !== null && this.players.length === 2) {
             clearInterval(this.gameLoopInterval);
             this.gameLoopInterval = null;
             let match = await this.prisma.match.create({

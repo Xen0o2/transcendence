@@ -1,6 +1,7 @@
 import "./MessageComponent.css";
 import { User } from "../Chat";
 import Cookies from "js-cookie";
+import { Link } from "react-router-dom";
 
 export default function MessageComponent({ content, sender, displayLogin}: { content: string, sender: User | null, displayLogin: boolean }) {
 
@@ -10,7 +11,7 @@ export default function MessageComponent({ content, sender, displayLogin}: { con
 			{!sender && 
 				<>
 					<div className="containerTextNameBubble">
-						{displayLogin && <p className="nameBubble">{Cookies.get("login")}</p>}
+						{displayLogin && <Link to={`/profile/${Cookies.get("id")}/profile`} className="nameBubble">{Cookies.get("login")}</Link>}
 						<div className="textBubble" style={{ backgroundColor: "#009688", opacity: "0.8"}}>
 							<p className="text">{content}</p>
 						</div>
@@ -26,7 +27,7 @@ export default function MessageComponent({ content, sender, displayLogin}: { con
 			{sender && sender.id === Cookies.get("id") ? 
 			<>
 				<div className="containerTextNameBubble">
-					{displayLogin && <p className="nameBubble">{sender.login}</p>}
+					{displayLogin && <Link to={`/profile/${sender.id}/profile`} className="nameBubble">{sender.login}</Link>}
 					<div className="textBubble" style={{ backgroundColor: "#009688" }}>
 						<p className="text">{content}</p>
 					</div>
@@ -46,7 +47,7 @@ export default function MessageComponent({ content, sender, displayLogin}: { con
 						<div className="containerImgBubble"></div>
 						}
 					<div className="containerTextNameBubble" style={{alignItems:"flex-start"}}>
-					{displayLogin && <p className="nameBubble">{sender.login}</p>}
+					{displayLogin && <Link to={`/profile/${sender.id}/profile`} className="nameBubble">{sender.login}</Link>}
 					<div className="textBubble" style={{ backgroundColor: "#4A4A4A" }}>
 						<p className="text">{content}</p>
 					</div>

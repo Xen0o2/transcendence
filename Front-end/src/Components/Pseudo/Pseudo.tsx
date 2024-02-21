@@ -34,18 +34,17 @@ export default function Pseudo() {
     
     try {
       if (username === "" && uploadedFiles.length === 0) return setLoadingSave(false)
-      console.log(username === "" ? Cookies.get("login") : username.slice(0, 8))
       let response = await axios.post(`${API_BASE_URL}/user/${Cookies.get("id")}/username`, { username: (username === "" ? Cookies.get("login") : username.slice(0, 8)) })    
       const extensions = ["jpg", "jpeg", "png", "webp", "gif"]
       if (uploadedFiles[0] && !extensions.some(extension => uploadedFiles[0].name.toLowerCase().endsWith(extension))) {
         setLoadingSave(false);
-        return showNofitication("ERROR_UPLOAD_NOT_IMAGE", "You only can upload images")
+        return showNofitication("ERROR_UPLOAD_NOT_IMAGE", "You can only upload images")
       }
-      if (response.data){
+      if (response.data && !response.data.error) {
         showNofitication("PROFILE_UPDATE", "Profile successfully updated")
         Cookies.set("login", username)
-      } else
-        return showNofitication("ERROR_PROFILE_UPDATE", "This username already exists")
+      } else if (!response.data)
+        showNofitication("ERROR_PROFILE_UPDATE", "This username already exists")
       setLoadingSave(false)
     } catch(error) {
       setLoadingSave(false)
@@ -78,16 +77,16 @@ export default function Pseudo() {
         headers: { 'Content-Type': 'multipart/form-data', }
       })
       Cookies.set("image", `${API_BASE_URL}/images/${response.data}`)
-      console.log('File uploaded successfully');
+      showNofitication("PROFILE_UPDATE", "Profile ssuccessfully updated")
     } catch (error) {
       console.error('Error uploading file', error);
+      showNofitication("ERROR_UPLOADING_IMAGE", "An error occured while uploading image")
     }
   }, [uploadedFiles]);
 
   const uploadHandler = useCallback(() => {
     if (!validate || !uploadedFiles[0]) return
     handleUpload();
-    showNofitication("PROFILE_UPDATE", "Profile successfully updated")
   }, [uploadedFiles, validate, handleUpload]);
 
   useEffect(() => {

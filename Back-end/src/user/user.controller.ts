@@ -81,15 +81,14 @@ export class UserController {
 	}
 
 	@Post(":userId/username")
-	async changeUsername(@Param("userId") userId: string, @Body() userData: any): Promise <User | null> {
+	async changeUsername(@Param("userId") userId: string, @Body() userData: any): Promise <User | {error: string} | null> {
 		try {
 			const already = await this.user({ login: userData.username })
 			if (already && already.id != userId)
 				return null
 			
-			let user = await this.user({ id: userId });
 			if (userData.username === "")
-				return user;
+				return { error: "Already exist" };
 			const updatedUser = await this.update({
 				data: { login: userData.username },
 				where: { id: userId }
@@ -98,6 +97,17 @@ export class UserController {
 		} catch(error) {
 			console.error(error)
 			throw new Error("Erreur lors de la mise à jour du pseudo")
+		}
+	}
+
+	@Get(":userId/friends")
+	async getFriends(@Param("userId") userId: string): Promise<User[]> {
+		try {
+			const user: any = await this.user({ id: userId })
+			return user.friends
+		} catch(error) {
+			console.error(error)
+			throw new Error("Erreur lors de la récupération de la liste d'ami")
 		}
 	}
 

@@ -38,7 +38,7 @@ export class MailController {
                 text: code,
             };
             codes[userId] = code;
-            const response = await transporter.sendMail(mailOptions);
+            await transporter.sendMail(mailOptions);
         } catch(error) {
             console.error(error)
             throw new Error("Erreur lors de l'envoie du code par mail");

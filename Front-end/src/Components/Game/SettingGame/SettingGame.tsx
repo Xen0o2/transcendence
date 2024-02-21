@@ -1,24 +1,39 @@
-import React, {useEffect, useState} from 'react';
+import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import "./SettingGame.css"
 import { GrReturn } from "react-icons/gr";
-import image from '../../../assets/alecoutr.jpg'
+import { User } from '../../Chat/Chat';
+import axios from 'axios';
+import { API_BASE_URL } from '../../../App';
+import { Page } from '../Game';
+import Cookies from 'js-cookie';
+import { useNotification } from '../../../ContextNotification';
+import Loader from '../../Loader/Loader';
 
 
 interface SettingGameProps {
-    setShowWindow: React.Dispatch<React.SetStateAction<boolean>>;
-    playGame():void;
-    socket: any;
-    leftGame: boolean;
-    score:any;
-    page:number;
-    setMap:any;
-    players:any;
-  }
-  
+    pageSetting   : Page;
+    setPageSetting: Dispatch<SetStateAction<Page>>;
+    invited       : User | null;
+    setInvited    : Dispatch<SetStateAction<User | null>>;
+    inviter       : User | null;
+    setInviter    : Dispatch<SetStateAction<User | null>>;
+    setShowWindow : React.Dispatch<React.SetStateAction<boolean>>;
+    playGame()    : void;
+    socket        : any;
+    leftGame      : boolean;
+    score         : any;
+    setMap        : Dispatch<SetStateAction<number>>;
+    players       : any;
+}
 
-export default function SettingGame({setShowWindow, playGame, socket, leftGame, score, page, setMap, players} : SettingGameProps ){
+export default function SettingGame({pageSetting, setPageSetting, invited, setInvited, inviter, setInviter, setShowWindow, playGame, socket, leftGame, score, setMap, players}: SettingGameProps ){
 
-    const [pageSetting, setPageSetting] = useState<number>(page); // a changer
+    const showNotification = useNotification();
+
+    const [usersStatus, setUsersStatus] = useState<{userId: string, status: number}[]>([])
+    const [friends, setFriends] = useState<User[]>([])
+    const [loadingFriends, setLoadingFriends] = useState(false);
+
     const [userArrived, setUserArrived] = useState(false);
     const [userInGame, setUserInGame] = useState<any>([]);
     const [mapSelect, setMapSelect] = useState(4);
@@ -30,24 +45,28 @@ export default function SettingGame({setShowWindow, playGame, socket, leftGame, 
 
     const handlePlay = () => {
         //setShowWindow(false);
+        setInvited(null);
+        setInviter(null);
         playGame();
     };
 
-// fonction pour changer de page dans les settings
+// fonctions pour changer de page dans les settings
 
-    const handlePageSetting = (value : number) => {
+    const getOnlineFriends = () => {
+        setPageSetting(Page.INVITE_A_FRIEND);
+        socket?.emit("getUsersStatus")
+    }
 
-        setPageSetting(value);
+    const joinMatchmaking = () => {
+        setPageSetting(Page.MATCHMAKING);
+        socket?.emit("matchmaking", "matchmaking")
+    }
 
-        if (value === 2){
-            socket?.emit("matchmaking", "matchmaking");
-        }
-    };
 
 // fonction pour retourner sur la première page de settings
 
     const handleReturn = (infos:string) => {
-        setPageSetting(0);
+        setPageSetting(Page.DEFAULT_PAGE);
         setTimeBeforePlay(null);
         if (infos === "matchmaking"){
             socket?.emit("leftMatchmaking", "matchmaking");
@@ -61,46 +80,132 @@ export default function SettingGame({setShowWindow, playGame, socket, leftGame, 
         setMapSelect(value);
     };
 
+    const getFriends = async () => {
+        setLoadingFriends(true);
+        try {
+            const response = await axios.get(`${API_BASE_URL}/user/${Cookies.get("id")}/friends`)
+            setFriends(response.data.filter((user: User) => usersStatus.find(e => e.userId == user.id)))
+            setLoadingFriends(false);
+        } catch(error) {
+            setLoadingFriends(false);
+            console.error(error);
+            showNotification("ERROR_GET_FRIENDS", "An error occured while getting friends list")
+        }
+    }
+
+    const inviteFriend = async (friend: User) => {
+        socket?.emit("gameInvitationSent", { inviterId: Cookies.get("id"), invitedId: friend.id })
+        setInvited(friend);
+        setPageSetting(Page.WAITING_FOR_FRIEND)
+    }
+
+    const cancelInvitation = async () => {
+        socket?.emit("gameInvitationCancel", { inviterId: Cookies.get("id"), invitedId: invited!.id })
+        setInvited(null);
+        setPageSetting(Page.DEFAULT_PAGE);
+        showNotification("CANCEL_INVITATION", "Successfully cancel game invitation")
+    }
+
+    const acceptInvitation = async () => {
+        socket?.emit("gameInvitationAccept", { inviterId: inviter!.id, invitedId: Cookies.get("id") });
+    }
+    
+    const declineInvitation = async () => {
+        socket?.emit("gameInvitationDecline", { inviterId: inviter!.id, invitedId: Cookies.get("id") });
+        setInviter(null);
+        setPageSetting(Page.DEFAULT_PAGE);
+    }
 
     useEffect(() => {
         if (socket){
+            socket.emit("getGameInvitation", { userId: Cookies.get("id")});
+
+            socket.on("gameInvitationList", (invitation: { inviter: User, invited: User }) => {
+                if (Cookies.get("id") === invitation.inviter.id) {
+                    setInvited(invitation.invited);
+                    setPageSetting(Page.WAITING_FOR_FRIEND);
+                }
+                if (Cookies.get("id") === invitation.invited.id) {
+                    setInviter(invitation.inviter);
+                    setPageSetting(Page.INVITATION_RECEIVED);
+                }
+            })
+
             socket.on('playerJoined', (message : string) => {
                 console.log(message);
             });
             socket.on('userList', (message : string) => {
+                setPageSetting(Page.MATCHMAKING)
                 setUserArrived(true);
                 setUserInGame(message);
+                console.log(message);
             })
             socket.on('returnToMenu', (message : string) => {
+                showNotification("USER_LEFT", "A user has leaved the game")
                 setUserArrived(false);
                 setTimeBeforePlay(null);
+                setPageSetting(Page.DEFAULT_PAGE)
             })
             socket.on('timeBeforePlay', (message: number) => {
                 setTimeBeforePlay(message);
             });
-            socket.on('bonus', (message: boolean) => {
-                if (message === true)
-                    setBonus(true);
-                else if (message === false)
-                    setBonus(false);
+            socket.on('bonus', (isBonusEnable: boolean) => {
+                setBonus(isBonusEnable)
             });
+            socket.on("usersStatus", (users: {userId: string, status: number}[]) => {
+                setUsersStatus(users);
+            })
+            socket.on("userAlreadyInvited", () => {
+                setPageSetting(Page.INVITE_A_FRIEND)
+                setInvited(null);
+                showNotification("ERROR_ALREADY_INVITED", "This player has already been invited by another player")
+            })
+            socket.on("userAlreadyInviter", () => {
+                setPageSetting(Page.DEFAULT_PAGE)
+                setInvited(null);
+                showNotification("ERROR_ALREADY_INVITED", "This player already invites another player")
+            })
+            socket.on("gameInvitationReceived", (inviter: User) => {
+                setPageSetting(Page.INVITATION_RECEIVED);
+                setInviter(inviter);
+                showNotification("INVITATION_RECEIVED", `${inviter.login} wants to play with you`)
+            })
+            socket.on("gameInvitationCancelled", () => {
+                setPageSetting(Page.DEFAULT_PAGE);
+                setInviter(null);
+                showNotification("ERROR_INVITATION_CANCELLED", "Game invitation has been cancelled")
+            })
+            socket.on("gameInvitationDeclined", () => {
+                setPageSetting(Page.DEFAULT_PAGE);
+                setInvited(null);
+                showNotification("ERROR_INVITATION_DECLINED", "Game invitation has been declined")
+            })
+            socket.on("userInvitedIsOffline", () => {
+                setPageSetting(Page.DEFAULT_PAGE);
+                setInvited(null);
+                showNotification("ERROR_PLAYER_OFFLINE", "This player is offline")
+            })
         }
     }, [socket])
 
-    useEffect(() => {
-       setPageSetting(page);
-    },[page])
-
     const handleSetBonus = (value:boolean) => {
-        if (value){
-            setBonus(true);
-            socket?.emit("Bonus", true);
-        } else {
-            setBonus(false);
-            socket?.emit("Bonus", false);
-        }
+        setBonus(value);
+        socket?.emit("Bonus", value);
     };
- 
+
+    useEffect(() => {
+        getFriends();
+        if (inviter && !usersStatus.find(user => user.userId == inviter.id)) {
+            setPageSetting(Page.DEFAULT_PAGE);
+            showNotification("ERROR_INVITER_DISCONNECT", `${inviter.login} just disconnect`)
+            setInviter(null);
+        }
+        if (invited && !usersStatus.find(user => user.userId == invited.id)) {
+            setPageSetting(Page.DEFAULT_PAGE);
+            showNotification("ERROR_INVITED_DISCONNECT", `${invited.login} just disconnect`)
+            setInvited(null);
+        }
+    }, [usersStatus])
     
 
     return (
@@ -110,10 +215,10 @@ export default function SettingGame({setShowWindow, playGame, socket, leftGame, 
           
                 <p className='pSettingGame'>If you want to play the best Pong game ever created in the world, click below.</p>
                 {<>
-                <button  onClick={()=>{handlePageSetting(1)}} className='ButtonSettingGame' >
-                Invite a friend
+                <button  onClick={getOnlineFriends} className='ButtonSettingGame' >
+                    Invite a friend
                 </button>
-                <button onClick={()=>{handlePageSetting(2)}} className='ButtonSettingGame' >
+                <button onClick={joinMatchmaking} className='ButtonSettingGame' >
                     Matchmaking
                 </button> 
                 </>}
@@ -123,17 +228,20 @@ export default function SettingGame({setShowWindow, playGame, socket, leftGame, 
         {pageSetting  === 1 && (
         <div className='containerSettingGame'>
             <GrReturn className='returnSettingGame' onClick={()=>{handleReturn("friend")}}/>
-          <p className='pSettingGame2'>
-            Invite a friend
-          </p>
-               <div className='containerFriendSettingGame'>
-                    <div className='FriendSettingGame'>
-                        <p>Name</p>
-                        <button className='buttonFriendSettingGame'>
-                            Invite
-                        </button>
+            <p className='pSettingGame2'>Invite a friend</p>
+            <div className='containerFriendSettingGame'>
+            {loadingFriends && <Loader />}
+            {!loadingFriends && friends.length === 0 && <p className='noFriendAvailable'>Nobody is available</p>}
+            {!loadingFriends && friends.length !== 0 &&
+                friends.map((friend, index) => (
+                    <div className='FriendSettingGame' key={index}>
+                        <img className="friendProfilePic" src={friend.image}></img>
+                        <p>{friend.login}</p>
+                        <button className='buttonFriendSettingGame' onClick={() => inviteFriend(friend)}>Invite</button>
                     </div>
-               </div> 
+                ))
+            }
+            </div>
         </div>)}
 
         {pageSetting  === 2 && (
@@ -153,26 +261,26 @@ export default function SettingGame({setShowWindow, playGame, socket, leftGame, 
                 <div className='containerMatchmakingSettingGame'>
                     {userInGame.map((user: any) => (
                         <div key={user.id} className='userInGame'>
-                            <img alt="Img" className="imgUserGame" src={image}></img>
-                            <p>{user.username}</p>
-                            <p>Level</p>
+                            <img alt="Img" className="imgUserGame" src={user.image}></img>
+                            <p>{user.login}</p>
+                            <p>Level {user.level}</p>
                         </div>    
                     ))}
-                     <button onClick={handlePlay} className='buttonPlay'>
-                             {timeBeforePlay ?  timeBeforePlay : 'Play'}
+                     <button onClick={handlePlay} className='buttonStartGame'>
+                            {timeBeforePlay || 'Play'}
                     </button>
                     <div className='chooseMap'>
-                        <button onClick={()=>{handleChooseMap(4)}} className='buttonMap' style={{border: (mapSelect === 4) ? "5px solid #b8b8b8" : ""}}>
-                                Map 1
+                        <button onClick={()=>{handleChooseMap(4)}} className='buttonMap' style={{backgroundColor: (mapSelect === 4) ? "green" : "#4A4A4A"}}>
+                            Map 1
                         </button>
-                        <button  onClick={()=>{handleChooseMap(0)}} className='buttonMap' style={{border: (mapSelect === 0) ? "5px solid #b8b8b8" : ""}}>
-                                Map 2
+                        <button  onClick={()=>{handleChooseMap(0)}} className='buttonMap' style={{backgroundColor: (mapSelect === 0) ? "green" : "#4A4A4A"}}>
+                            Map 2
                         </button>
-                        <button onClick={()=>{handleChooseMap(1)}} className='buttonMap' style={{border: (mapSelect === 1) ? "5px solid #b8b8b8" : ""}}>
-                                Map 3
+                        <button onClick={()=>{handleChooseMap(1)}} className='buttonMap' style={{backgroundColor: (mapSelect === 1) ? "green" : "#4A4A4A"}}>
+                            Map 3
                         </button>
-                        <button  onClick={()=>{handleChooseMap(2)}} className='buttonMap' style={{border: (mapSelect === 2) ? "5px solid #b8b8b8" : ""}}>
-                                Map 4
+                        <button  onClick={()=>{handleChooseMap(2)}} className='buttonMap' style={{backgroundColor: (mapSelect === 2) ? "green" : "#4A4A4A"}}>
+                            Map 4
                         </button>
                     </div>
                     <div className='chooseBonus'>
@@ -196,12 +304,31 @@ export default function SettingGame({setShowWindow, playGame, socket, leftGame, 
                     <p className='pScore'> {score?.score2} </p>
                     <p className='pNameScore'> {players.player2}  </p>
                 </div>
-                <button onClick={()=>{handleReturn("replay")}} className='buttonPlay'>
-                            Replay
-                </button>
-                
-         </div>
-        }
+                <button onClick={()=>{handleReturn("replay")}} className='buttonStartGame'>Replay</button> 
+         </div>}
+        
+        {pageSetting === 4 && invited !== null &&
+         <div className='containerSettingGame'>
+            <p className='pSettingGame2'>Invitation sent</p>
+            <div className='containerMatchmakingSettingGame'>
+                <p>Waiting for {invited.login}...</p>
+                <div className='loader_container'>
+                    <div className='loader2'></div>
+                </div>
+            </div>
+            <button className='invitationCancel' onClick={cancelInvitation}>Cancel</button>
+        </div>}
+        
+        {pageSetting === 5 && inviter !== null &&
+         <div className='containerSettingInvitationReceive'>
+                <img src={inviter.image} className='inviterProfilePic' />
+                <p className='inviterUsername'>{inviter.login}</p>
+                <p className='invitationDescription'>Wants to play with you</p>
+                <div className='invitationButtons'>
+                    <button onClick={acceptInvitation} className='invitationButtonAccept'>Accept</button> 
+                    <button onClick={declineInvitation} className='invitationButtonDecline'>Decline</button> 
+                </div>
+         </div>}
         </>
     )
 }

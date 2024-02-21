@@ -1,6 +1,6 @@
 import React from "react";
 import "./Login.css";
-import { color } from "../../config";
+import { CLIENT_ID, color } from "../../config";
 import { REDIRECT_URI } from "../../App";
 import Loader from "../Loader/Loader";
 
@@ -13,7 +13,7 @@ export default function Login({
 }) {
   const login_url =
     "https://api.intra.42.fr/oauth/authorize" +
-    "?client_id=u-s4t2ud-68346e25a5e2e6dfab2d06f70bc9693aa84084e271c194a8d32a84e5d2d6ab57" +
+    "?client_id=" + CLIENT_ID +
     "&redirect_uri=" + REDIRECT_URI +
     "&response_type=code";
 

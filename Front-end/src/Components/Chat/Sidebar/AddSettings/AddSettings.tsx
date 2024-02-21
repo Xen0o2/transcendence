@@ -4,10 +4,17 @@ import { color } from "../../../../config";
 import CreateChannelForm from "./CreateChannelForm/CreateChannelForm";
 import { Channel, DMChannel } from "../../Chat";
 import SendDM from "./SendDM/SendDM";
+import { Page } from "../../../Game/Game";
+
+interface addSettingsProps {
+	setSelectedChat: Dispatch<SetStateAction<string>>,
+	setChannels    : Dispatch<SetStateAction<Channel[]>>,
+	setDMChannels  : Dispatch<SetStateAction<DMChannel[]>>,
+	closeAllWindows: () => void
+}
 
 export default function AddSettings(
-	{setSelectedChat, setChannels, setDMChannels, closeAllWindows}: 
-	{setSelectedChat: Dispatch<SetStateAction<string>>, setChannels: Dispatch<SetStateAction<Channel[]>>, setDMChannels: Dispatch<SetStateAction<DMChannel[]>>, closeAllWindows: () => void}) {
+	{setSelectedChat, setChannels, setDMChannels, closeAllWindows}: addSettingsProps) {
 	const [showChatSetting, setShowChatSetting] = useState(true);
 	const [addChannel, setAddChannel] = useState(false);
 	const [sendMp, setSendMp] = useState(false);

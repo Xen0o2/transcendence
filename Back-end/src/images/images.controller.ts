@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from "express"
 import * as path from "path"
@@ -31,7 +31,11 @@ export class ImagesController {
     @Post('upload/:userId')
     @UseInterceptors(FileInterceptor('file'))
     async uploadFile(@UploadedFile() file: ImageFile, @Param("userId") userId: string) {
-        await this.prisma.user.update({
+        const extensions = ["jpg", "jpeg", "png", "webp", "gif"]
+        if (!extensions.some(extension => file.originalname.toLowerCase().endsWith(extension)))
+            throw new BadRequestException("File is not an image")
+        
+            await this.prisma.user.update({
             data: { image: `${process.env.BACKEND_URL}:${process.env.BACKEND_PORT}/${file.path}`},
             where: { id: userId }
         })

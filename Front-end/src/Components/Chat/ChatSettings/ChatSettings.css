@@ -17,6 +17,14 @@
     padding-top: -10%;
 }
 
+.username {
+    display: block;
+    color: black;
+    text-decoration: none;
+    width: 50%;
+    overflow: hidden;
+}
+
 .containerSettingGroupChild{
     height: 90%;
     width: 90%;

@@ -16,6 +16,7 @@ import Loader from "../../Loader/Loader";
 import PasswordSettings from "./PasswordSettings/PasswordSettings";
 import { useSocket } from "../../../ContextSocket";
 import { useNotification } from "../../../ContextNotification";
+import { Link } from "react-router-dom";
 
 
 export default function ChatSettings(
@@ -344,8 +345,8 @@ export default function ChatSettings(
           <div className="containerAdmn">
             {channelSettings?.admins.map((admin: User, index: number) => (
               <div className="memberGroup" key={index}>
-                <p style={{ width: "50%", overflow: "hidden" }}>{admin.login}</p>
-				        {/*Bouton supprimer un admin seulement pour le propriétaire du salon*/}
+				<Link to={`/profile/${admin.id}/profile`} className="username">{admin.login}</Link>
+				{/*Bouton supprimer un admin seulement pour le propriétaire du salon*/}
                 {channelSettings.ownerId !== admin.id && Cookies.get("id") === channelSettings.ownerId ?
 					(loadingRemoveAdmin.includes(admin.id) ?
 					<Loader /> :
@@ -365,7 +366,7 @@ export default function ChatSettings(
           <div className="containerAdmn">
             {channelSettings?.users.map((user: User, index: number) => (
               <div className="memberGroup" key={index}>
-                <p style={{ width: "50%", overflow: "hidden" }}>{user.login}</p>
+				<Link to={`/profile/${user.id}/profile`} className="username">{user.login}</Link>
                 {/*Boutons de modération seulement pour les admins et le owner*/}
                 {channelSettings.ownerId !== user.id && channelSettings.admins.find(u => u.id === Cookies.get("id")) ?
 					(loadingModeration.includes(user.id) ? 

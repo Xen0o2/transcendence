@@ -26,6 +26,9 @@ let ImagesController = class ImagesController {
         return res.sendFile(file);
     }
     async uploadFile(file, userId) {
+        const extensions = ["jpg", "jpeg", "png", "webp", "gif"];
+        if (!extensions.some(extension => file.originalname.toLowerCase().endsWith(extension)))
+            throw new common_1.BadRequestException("File is not an image");
         await this.prisma.user.update({
             data: { image: `${process.env.BACKEND_URL}:${process.env.BACKEND_PORT}/${file.path}` },
             where: { id: userId }

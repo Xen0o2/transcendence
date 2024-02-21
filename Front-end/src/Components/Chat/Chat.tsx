@@ -1,5 +1,5 @@
 import "./Chat.css";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, Dispatch, SetStateAction } from "react";
 import { LuSettings2 } from "react-icons/lu";
 
 import SettingUser from "./SettingUser/SettingUser";
@@ -13,6 +13,7 @@ import Cookies from "js-cookie";
 import { useSocket } from "../../ContextSocket";
 import MessageComponent from "./Message/MessageComponent";
 import { useNotification } from "../../ContextNotification";
+import { Page } from "../Game/Game";
 
 export interface Message {
   id: number;
@@ -119,18 +120,24 @@ export interface DMChannel {
 	messages: Message[]
 }
 
-export default function Chat() {
+interface chatProps {
+	pageSetting   : Page,
+	setPageSetting: Dispatch<SetStateAction<Page>>,
+	invited       : User | null,
+	setInvited    : Dispatch<SetStateAction<User | null>>
+	inviter       : User | null,
+	setInviter    : Dispatch<SetStateAction<User | null>>
+}
+
+export default function Chat({pageSetting, setPageSetting, invited, setInvited, inviter, setInviter}: chatProps) {
 	
 	const socket = useSocket();
 	const showNotification = useNotification();
 
 	const [channels, setChannels] = useState<Channel[]>([])
 	const [DMChannels, setDMChannels] = useState<DMChannel[]>([])
-	
 	const [typingDisable, setTypingDisable] = useState(0)
-
 	const [loadingChannels, setLoadingChannels] = useState(false)
-
 	const [showAddSettings, setShowAddSettings] = useState(false);
 	const [selectedChat, setSelectedChat] = useState<string>("");
 	const [showChatSettings, setShowChatSettings] = useState(false);
@@ -447,7 +454,7 @@ export default function Chat() {
 				setDMChannels(response.data)
 			} catch(error) {
 				console.error(error)
-				showNotification("ERROR", "Erreur réseau : Impossible de récupérer la liste des salons privés");
+				showNotification("ERROR_GET_CHANNELS", "An error occured while getting channels");
 			}
 		}
 
@@ -460,7 +467,7 @@ export default function Chat() {
 			} catch(error) {
         		setLoadingChannels(false)
 				console.error(error)
-				showNotification("ERROR", "Erreur réseau : Impossible de récupérer la liste des salons")
+				showNotification("ERROR_GET_CHANNELS", "An error occured while getting channels")
 			}
 		}
 
@@ -479,7 +486,7 @@ export default function Chat() {
       {/*APPARAIT QUAND CLIQUE SUR PARAMETRE DE GROUPE*/}
       {showChatSettings && ( <ChatSettings channels={channels} setChannels={setChannels} selectedChat={selectedChat} setSelectedChat={setSelectedChat} closeAllWindows={closeAllWindows} /> )}
       {/*APPARAIT QUAND CLIQUE SUR PARAMETRE DE DM*/}
-    	{showDMSettings && <SettingUser DMChannelSettings={DMChannels.find(DMChannel => DMChannel.id === selectedChat)!} setDMChannels={setDMChannels} setTypingDisable={setTypingDisable} />}
+    	{showDMSettings && <SettingUser pageSetting={pageSetting} setPageSetting={setPageSetting} invited={invited} setInvited={setInvited} inviter={inviter} setInviter={setInviter} DMChannelSettings={DMChannels.find(DMChannel => DMChannel.id === selectedChat)!} setDMChannels={setDMChannels} setTypingDisable={setTypingDisable} />}
 
         <div className="containerTopChat" style={{ backgroundColor: color.primary }}>
           <div className="nameConv">

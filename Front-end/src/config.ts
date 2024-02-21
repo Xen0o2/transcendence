@@ -4,6 +4,7 @@ export const color = {
 };
 
 const DEFAULT_ADDRESS = "http://localhost"
+export const CLIENT_ID = "u-s4t2ud-68346e25a5e2e6dfab2d06f70bc9693aa84084e271c194a8d32a84e5d2d6ab57"
 
 export const address = {
 	frontendRedirectURL: DEFAULT_ADDRESS,

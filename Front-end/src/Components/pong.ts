@@ -7,6 +7,7 @@ import Nerf from '../assets/PowerUp/Nerf.png';
 import Random from '../assets/PowerUp/Random.png';
 import Speed from '../assets/PowerUp/Speed.png';
 import Teleport from '../assets/PowerUp/Teleport.png';
+import { Socket } from 'socket.io-client';
 
 
 export default function pong(id:any, socketID:any)
@@ -14,10 +15,13 @@ export default function pong(id:any, socketID:any)
   
   const canvas = id;
   const ctx = canvas.getContext('2d')
+  const ArrowColor = rgba(255, 255, 255, 1);
   const ScoreColor = rgba(0, 0, 0, 0.5);
   let   TimerColor = rgba(0, 0, 0, 0.5);
   let socket = socketID;
   let Timer : any  = 0;
+  let side = ""
+  let already = 0;
   
 
   // Assets //
@@ -146,6 +150,7 @@ export default function pong(id:any, socketID:any)
 
   function ResetAll()
   {
+    already = 0;
     BallX = PongWidth / 2;
     BallY = PongHeight / 2;
     BallDirX = 0;
@@ -162,6 +167,8 @@ export default function pong(id:any, socketID:any)
     DrawPongZone();
     SpawnBonus();
     DrawScore(PlayerScore1, PlayerScore2);
+    if (already < 180)
+      DrawArrow()
     DrawTimer(TimeInM, TimeInS);
    // DrawBonusItem();
     DrawPongBall();
@@ -247,6 +254,36 @@ export default function pong(id:any, socketID:any)
 
    // ---- Socket ---- //
 
+  function DrawArrow() {
+    already++;
+    if (side == "left") {
+      ctx.fillStyle = ArrowColor;
+      ctx.font = "bold 70px Poppins";
+      ctx.textAlign = "center";
+      ctx.fillText("You", PongWidth / 4, PongHeight / 2);
+      setTimeout(() => {
+        ctx.clearRect(0, 0, canvas.height, canvas.width);
+      }, 3000);
+    }
+    if (side == "right") {
+      ctx.fillStyle = ArrowColor;
+      ctx.font = "bold 70px Poppins";
+      ctx.textAlign = "center";
+      ctx.fillText("You", 3 * (PongWidth / 4), PongHeight / 2);
+      setTimeout(() => {
+        ctx.clearRect(0, 0, canvas.height, canvas.width);
+      }, 3000);
+    }
+  }
+
+   socket.on("drawLeft", () => {
+      side = "left"
+  })
+  
+  socket.on("drawRight", () => {
+      side = "right"
+   })
+
    socket.on('gameState', (message : any) => {
         Paddle1.y = message.paddles.player1.y;
         Paddle2.y = message.paddles.player2.y;
@@ -257,11 +294,7 @@ export default function pong(id:any, socketID:any)
         PlayerScore1 = message.paddles.player1.score;
         PlayerScore2 = message.paddles.player2.score;
 
-        Timer = formatTime(Math.floor(message.property.countdown / 100));
-     
-        
-       
-        
+        Timer = formatTime(Math.floor(message.property.countdown / 100)); 
    });
 
    const formatTime = (time:any) => {
@@ -272,6 +305,7 @@ export default function pong(id:any, socketID:any)
 
 
    socket.on('stop', (message : string) => {
+
     ResetBallStats();
     ResetAll();
     DrawElement();
@@ -677,6 +711,7 @@ export default function pong(id:any, socketID:any)
 }
 
 // DRAW //
+
 
 // COLOR //
 
