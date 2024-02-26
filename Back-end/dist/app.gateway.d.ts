@@ -26,10 +26,10 @@ export declare class AppGateway implements OnGatewayConnection, OnGatewayDisconn
     handleMatchmakingEvent(client: Socket): Promise<void>;
     handlePlayEvent(client: Socket): void;
     handleLeftMatchMaking(client: Socket): void;
-    handleStop(client: Socket, infos: any): void;
+    handleStop(client: Socket, infos: string | null): void;
     handleArrowUp(client: Socket): void;
     handleArrowDown(client: Socket): void;
-    handleSetBonus(client: Socket, infos: any): void;
+    handleSetBonus(client: Socket, value: number): void;
     swicthedChannel(client: Socket, data: {
         channelId: string;
     }): Promise<void>;

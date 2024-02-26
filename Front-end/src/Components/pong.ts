@@ -293,6 +293,8 @@ export default function pong(id:any, socketID:any)
         BallY = message.ball.y;
         PlayerScore1 = message.paddles.player1.score;
         PlayerScore2 = message.paddles.player2.score;
+        Paddle1.height = message.paddles.height;
+        Paddle2.height = message.paddles.height;
 
         Timer = formatTime(Math.floor(message.property.countdown / 100)); 
    });

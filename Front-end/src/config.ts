@@ -3,7 +3,7 @@ export const color = {
   secondary: "#4A4A4A"
 };
 
-const DEFAULT_ADDRESS = "http://localhost"
+const DEFAULT_ADDRESS = "http://10.18.207.242"
 export const CLIENT_ID = "u-s4t2ud-68346e25a5e2e6dfab2d06f70bc9693aa84084e271c194a8d32a84e5d2d6ab57"
 
 export const address = {

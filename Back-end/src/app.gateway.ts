@@ -144,7 +144,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.games[gameId].property.timeoutId = setTimeout(() => {
 		if (this.games[gameId]){
 			if (this.games[gameId]?.players.length === 2){
-				this.games[gameId].startGameLoop(() => this.handleStop(client, "jsp"));
+				this.games[gameId].startGameLoop();
 				this.sendMessageToClient(this.games[gameId].players[0].id, "drawLeft", {})
 				this.sendMessageToClient(this.games[gameId].players[1].id, "drawRight", {})
 				this.sendMessageToGame(this.games[gameId],"partieLaunch",  "go");
@@ -191,7 +191,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('stop')
-	handleStop(client: Socket, infos : any): void {
+	handleStop(client: Socket, infos: string | null) {
 		// console.log("partie finito");
 		
 		const gameId = this.userGameMap[client.id];
@@ -225,14 +225,13 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	// ACTIVE OU DESACTIVE LES BONUS
 	@SubscribeMessage('Bonus')
-	handleSetBonus(client: Socket, infos: any): void {
-		console.log("infoBonus", infos);
+	handleSetBonus(client: Socket, value: number): void {
 		const gameId = this.userGameMap[client.id];
-		if (infos === true)	
-			this.sendMessageToGame(this.games[gameId], "bonus", true)
-		else if (infos === false)
-			this.sendMessageToGame(this.games[gameId], "bonus", false)
-		
+		if (value == 0)
+			this.games[gameId].paddles.height -= 50;
+		else if (value == 2)
+			this.games[gameId].paddles.height += 50;
+		this.sendMessageToGame(this.games[gameId], "bonus", value);
 	};
 
   	// QUELQU'UN CHANGE DE SALON

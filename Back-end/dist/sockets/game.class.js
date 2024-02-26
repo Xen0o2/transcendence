@@ -50,13 +50,14 @@ class Game {
         this.onStopCallback = onStopCallback;
         this.users = users;
     }
-    startGameLoop(data) {
+    startGameLoop() {
         this.property.statusGame = true;
         if (this.property.statusGame === true) {
             if (this.gameLoopInterval === null) {
                 this.gameLoopInterval = setInterval(function () {
                     this.updateGame();
                     this.sendGameStateToClients();
+                    console.log(this.paddles.height);
                 }.bind(this), 1000 / 60);
             }
         }

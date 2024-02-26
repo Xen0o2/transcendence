@@ -38,7 +38,8 @@ export default function SettingGame({pageSetting, setPageSetting, invited, setIn
     const [userInGame, setUserInGame] = useState<any>([]);
     const [mapSelect, setMapSelect] = useState(4);
     const [timeBeforePlay, setTimeBeforePlay] = useState<any>(null);
-    const [bonus, setBonus] = useState(false);
+    const [bonus, setBonus] = useState(1);
+    const [timerStart, setTimerStart] = useState(false);
    
 
 // fonction pour lancer la partie de Pong (qui sert surement a rien pour l'instant)
@@ -47,6 +48,7 @@ export default function SettingGame({pageSetting, setPageSetting, invited, setIn
         //setShowWindow(false);
         setInvited(null);
         setInviter(null);
+        setTimerStart(true);
         playGame();
     };
 
@@ -84,7 +86,7 @@ export default function SettingGame({pageSetting, setPageSetting, invited, setIn
         setLoadingFriends(true);
         try {
             const response = await axios.get(`${API_BASE_URL}/user/${Cookies.get("id")}/friends`)
-            setFriends(response.data.filter((user: User) => usersStatus.find(e => e.userId == user.id)))
+            setFriends(response.data.filter((user: User) => usersStatus.find(e => e.userId === user.id)))
             setLoadingFriends(false);
         } catch(error) {
             setLoadingFriends(false);
@@ -147,13 +149,15 @@ export default function SettingGame({pageSetting, setPageSetting, invited, setIn
                 setPageSetting(Page.DEFAULT_PAGE)
             })
             socket.on('timeBeforePlay', (message: number) => {
+                setTimerStart(true);
                 setTimeBeforePlay(message);
             });
-            socket.on('bonus', (isBonusEnable: boolean) => {
-                setBonus(isBonusEnable)
+            socket.on('bonus', (bonusValue: number) => {
+                setBonus(bonusValue)
             });
             socket.on("usersStatus", (users: {userId: string, status: number}[]) => {
                 setUsersStatus(users);
+                setTimerStart(false);
             })
             socket.on("userAlreadyInvited", () => {
                 setPageSetting(Page.INVITE_A_FRIEND)
@@ -186,25 +190,27 @@ export default function SettingGame({pageSetting, setPageSetting, invited, setIn
                 showNotification("ERROR_PLAYER_OFFLINE", "This player is offline")
             })
         }
+        // eslint-disable-next-line
     }, [socket])
 
-    const handleSetBonus = (value:boolean) => {
+    const handleSetBonus = (value: number) => {
         setBonus(value);
         socket?.emit("Bonus", value);
     };
 
     useEffect(() => {
         getFriends();
-        if (inviter && !usersStatus.find(user => user.userId == inviter.id)) {
+        if (inviter && !usersStatus.find(user => user.userId === inviter.id)) {
             setPageSetting(Page.DEFAULT_PAGE);
             showNotification("ERROR_INVITER_DISCONNECT", `${inviter.login} just disconnect`)
             setInviter(null);
         }
-        if (invited && !usersStatus.find(user => user.userId == invited.id)) {
+        if (invited && !usersStatus.find(user => user.userId === invited.id)) {
             setPageSetting(Page.DEFAULT_PAGE);
             showNotification("ERROR_INVITED_DISCONNECT", `${invited.login} just disconnect`)
             setInvited(null);
         }
+        // eslint-disable-next-line
     }, [usersStatus])
     
 
@@ -235,7 +241,7 @@ export default function SettingGame({pageSetting, setPageSetting, invited, setIn
             {!loadingFriends && friends.length !== 0 &&
                 friends.map((friend, index) => (
                     <div className='FriendSettingGame' key={index}>
-                        <img className="friendProfilePic" src={friend.image}></img>
+                        <img className="friendProfilePic" src={friend.image} alt="profile pic"></img>
                         <p>{friend.login}</p>
                         <button className='buttonFriendSettingGame' onClick={() => inviteFriend(friend)}>Invite</button>
                     </div>
@@ -266,7 +272,7 @@ export default function SettingGame({pageSetting, setPageSetting, invited, setIn
                             <p>Level {user.level}</p>
                         </div>    
                     ))}
-                     <button onClick={handlePlay} className='buttonStartGame'>
+                     <button onClick={handlePlay} className='buttonStartGame' disabled={timerStart}>
                             {timeBeforePlay || 'Play'}
                     </button>
                     <div className='chooseMap'>
@@ -285,8 +291,9 @@ export default function SettingGame({pageSetting, setPageSetting, invited, setIn
                     </div>
                     <div className='chooseBonus'>
                     <div className='containerRemovePassword' style={{height:"80%"}}>
-                            <div onClick={() => {handleSetBonus(false)}} style={{backgroundColor: !bonus ? "#FF5A5A" : "#4A4A4A"}} className='removePassword'>no bonus</div>
-                            <div onClick={() => {handleSetBonus(true)}} style={{backgroundColor: bonus ? "green" : "#4A4A4A"}} className='removePassword'>bonus</div>
+                            <div onClick={() => {handleSetBonus(0)}} style={{backgroundColor: bonus === 0 ? "green" : "#4A4A4A"}} className='gameBonus'>Small</div>
+                            <div onClick={() => {handleSetBonus(1)}} style={{backgroundColor: bonus === 1 ? "green" : "#4A4A4A"}} className='gameBonus'>Normal</div>
+                            <div onClick={() => {handleSetBonus(2)}} style={{backgroundColor: bonus === 2 ? "green" : "#4A4A4A"}} className='gameBonus'>Long</div>
                         </div>
                     </div>
                     
@@ -321,7 +328,7 @@ export default function SettingGame({pageSetting, setPageSetting, invited, setIn
         
         {pageSetting === 5 && inviter !== null &&
          <div className='containerSettingInvitationReceive'>
-                <img src={inviter.image} className='inviterProfilePic' />
+                <img src={inviter.image} className='inviterProfilePic' alt="profile pic of inviter"/>
                 <p className='inviterUsername'>{inviter.login}</p>
                 <p className='invitationDescription'>Wants to play with you</p>
                 <div className='invitationButtons'>

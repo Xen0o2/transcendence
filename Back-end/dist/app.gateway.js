@@ -131,7 +131,7 @@ let AppGateway = class AppGateway {
         this.games[gameId].property.timeoutId = setTimeout(() => {
             if (this.games[gameId]) {
                 if (this.games[gameId]?.players.length === 2) {
-                    this.games[gameId].startGameLoop(() => this.handleStop(client, "jsp"));
+                    this.games[gameId].startGameLoop();
                     this.sendMessageToClient(this.games[gameId].players[0].id, "drawLeft", {});
                     this.sendMessageToClient(this.games[gameId].players[1].id, "drawRight", {});
                     this.sendMessageToGame(this.games[gameId], "partieLaunch", "go");
@@ -194,13 +194,13 @@ let AppGateway = class AppGateway {
         const gameId = this.userGameMap[client.id];
         this.games[gameId]?.arrowDown(client.id);
     }
-    handleSetBonus(client, infos) {
-        console.log("infoBonus", infos);
+    handleSetBonus(client, value) {
         const gameId = this.userGameMap[client.id];
-        if (infos === true)
-            this.sendMessageToGame(this.games[gameId], "bonus", true);
-        else if (infos === false)
-            this.sendMessageToGame(this.games[gameId], "bonus", false);
+        if (value == 0)
+            this.games[gameId].paddles.height -= 50;
+        else if (value == 2)
+            this.games[gameId].paddles.height += 50;
+        this.sendMessageToGame(this.games[gameId], "bonus", value);
     }
     ;
     async swicthedChannel(client, data) {
@@ -658,7 +658,7 @@ __decorate([
 __decorate([
     (0, websockets_1.SubscribeMessage)('stop'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:paramtypes", [socket_io_1.Socket, String]),
     __metadata("design:returntype", void 0)
 ], AppGateway.prototype, "handleStop", null);
 __decorate([
@@ -676,7 +676,7 @@ __decorate([
 __decorate([
     (0, websockets_1.SubscribeMessage)('Bonus'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Number]),
     __metadata("design:returntype", void 0)
 ], AppGateway.prototype, "handleSetBonus", null);
 __decorate([

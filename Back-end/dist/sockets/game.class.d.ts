@@ -41,7 +41,7 @@ export declare class Game {
     io: any;
     onStopCallback: ((arg: string) => void) | null;
     constructor(io: any, onStopCallback: ((arg: any) => void) | null, prisma: PrismaService, users: User[]);
-    startGameLoop(data: any): void;
+    startGameLoop(): void;
     stopGameLoop(): Promise<void>;
     updateGame(): void;
     sendGameStateToClients(): void;

@@ -59,7 +59,7 @@ export class Game {
       this.users = users;
     }
 
-    startGameLoop(data:any) {
+    startGameLoop() {
       this.property.statusGame = true;
       if (this.property.statusGame === true) {
         if (this.gameLoopInterval === null) {
@@ -67,6 +67,7 @@ export class Game {
           this.gameLoopInterval = setInterval(function() {
             this.updateGame();
             this.sendGameStateToClients();
+            console.log(this.paddles.height)
           }.bind(this), 1000 / 60);
         }
     }
