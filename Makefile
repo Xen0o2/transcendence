@@ -12,7 +12,7 @@
 
 all: start
 
-start:
+start: setip
 	@echo "Starting Transcendence"
 	@docker compose up -d
 	@echo "Transcendence started"
@@ -24,6 +24,10 @@ stop:
 
 up: start
 down: stop
+
+setip:
+	@echo "Setting ip address in the files"
+	@bash setipadr.sh
 
 clean: stop
 	@echo "Cleaning Transcendence"
