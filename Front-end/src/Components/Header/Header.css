@@ -16,6 +16,7 @@
     height: 50px;
     width: 50px;
     border-radius: 100px;
+    object-fit: cover;
     cursor: pointer;
   }
 

@@ -56,7 +56,7 @@ export default function HistoryComponent() {
 				</div>
 				<div className="containerHistory">
 					{loadingMatch && <Loader />}
-					{!loadingMatch && matches.length === 0 && <p>No matches played</p>}
+					{!loadingMatch && matches.length === 0 && <p style={{color: "white"}}>No matches played</p>}
 					{!loadingMatch && matches.map(match => (
 						<div className="contentHistory" style={{ backgroundColor: match.winnerid ? (match.winnerid === userId ? "#35C84D" : "#FF5A5A") : "gray" }}>
 							{match.winnerid === null ?

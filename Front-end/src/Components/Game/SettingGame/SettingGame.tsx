@@ -146,7 +146,7 @@ export default function SettingGame({pageSetting, setPageSetting, invited, setIn
                 showNotification("USER_LEFT", "A user has leaved the game")
                 setUserArrived(false);
                 setTimeBeforePlay(null);
-                setPageSetting(Page.DEFAULT_PAGE)
+                setPageSetting(Page.MATCHMAKING)
             })
             socket.on('timeBeforePlay', (message: number) => {
                 setTimerStart(true);
@@ -177,17 +177,22 @@ export default function SettingGame({pageSetting, setPageSetting, invited, setIn
             socket.on("gameInvitationCancelled", () => {
                 setPageSetting(Page.DEFAULT_PAGE);
                 setInviter(null);
-                showNotification("ERROR_INVITATION_CANCELLED", "Game invitation has been cancelled")
+                showNotification("ERROR_INVITATION_CANCELLED", "Game invitation has been cancelled");
             })
             socket.on("gameInvitationDeclined", () => {
                 setPageSetting(Page.DEFAULT_PAGE);
                 setInvited(null);
-                showNotification("ERROR_INVITATION_DECLINED", "Game invitation has been declined")
+                showNotification("ERROR_INVITATION_DECLINED", "Game invitation has been declined");
             })
             socket.on("userInvitedIsOffline", () => {
                 setPageSetting(Page.DEFAULT_PAGE);
                 setInvited(null);
-                showNotification("ERROR_PLAYER_OFFLINE", "This player is offline")
+                showNotification("ERROR_PLAYER_OFFLINE", "This player is offline");
+            })
+            socket.on("userInMatchmaking", () => {
+                setInvited(null);
+                setPageSetting(Page.DEFAULT_PAGE);
+                showNotification("ERROR_PLAYER_IN_MATCHMAKING", "This player is currently in matchmaking");
             })
         }
         // eslint-disable-next-line

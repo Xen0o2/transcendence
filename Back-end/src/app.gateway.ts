@@ -631,6 +631,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (!userInvited)
 			return this.sendMessageToClient(userInviter.id, "userInvitedIsOffline", {});
 		
+		const userInMatchmaking = this.userGameMap[userInvited.id];
+		if (userInMatchmaking)
+			return this.sendMessageToClient(userInviter.id, "userInMatchmaking", {});
 		const alreadyInvited = this.invitations.find(invitation => invitation.invitedId === data.invitedId);
 		if (alreadyInvited)
 			return this.sendMessageToClient(userInviter.id, "userAlreadyInvited", {});
