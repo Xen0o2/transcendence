@@ -261,18 +261,18 @@ export default function pong(id:any, socketID:any)
       ctx.font = "bold 70px Poppins";
       ctx.textAlign = "center";
       ctx.fillText("You", PongWidth / 4, PongHeight / 2);
-      setTimeout(() => {
-        ctx.clearRect(0, 0, canvas.height, canvas.width);
-      }, 3000);
+      // setTimeout(() => {
+      //   ctx.clearRect(0, 0, canvas.height, canvas.width);
+      // }, 3000);
     }
     if (side == "right") {
       ctx.fillStyle = ArrowColor;
       ctx.font = "bold 70px Poppins";
       ctx.textAlign = "center";
       ctx.fillText("You", 3 * (PongWidth / 4), PongHeight / 2);
-      setTimeout(() => {
-        ctx.clearRect(0, 0, canvas.height, canvas.width);
-      }, 3000);
+      // setTimeout(() => {
+      //   ctx.clearRect(0, 0, canvas.height, canvas.width);
+      // }, 3000);
     }
   }
 

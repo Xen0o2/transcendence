@@ -71,7 +71,7 @@ export default function SendDM({setSelectedChat, setDMChannels, closeAllWindows}
                                         <button className="buttonSendMsg" onClick={() => {sendDM(friend.id)}}>Send</button>}
                                 </div>
                             )) :
-                            <p className="pSendDm">Vous n'avez personne à qui envoyer un message</p>
+                            <p className="pSendDm">You have no friends to send a message to</p>
                     }
                 </div>
 			</div>

@@ -17,7 +17,7 @@ export class Game {
       statusGame: false,
       gameTimer: null,
       gameTime: 0,
-      countdown: 1000,
+      countdown: 3000,
       intervalTimer: null,
       timeoutId: null,
       ballPause: false,

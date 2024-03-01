@@ -104,6 +104,7 @@ export default function FriendComponent() {
 	}
 
 	useEffect(() => {
+		try {
 		socket?.emit("getUsersStatus")
 
 		socket?.on("usersStatus", (data: { userId: string, status: number }[]) => {
@@ -116,28 +117,30 @@ export default function FriendComponent() {
 
 		socket?.on("receiveFriendRequest", (data: { friendship: Friendship, user: User }) => {
 			setUser(data.user);
-			showNotification("RECEIVE_FRIEND_REQUEST", `${data.friendship.user1id === data.user.id ? data.friendship.user2.login : data.friendship.user1.login} sent you a friend request`)
+			showNotification("RECEIVE_FRIEND_REQUEST", `${data.friendship.user1id === data.user.id ? data.friendship.user2?.login : data.friendship.user1?.login} sent you a friend request`)
 		})
 
 		socket?.on("friendRequestAccepted", (data: { dmchannel: DMChannel, user: User}) => {
 			setUser(data.user);
-			showNotification("FRIEND_REQUEST_ACCEPTED", `${data.dmchannel.user1.id === data.user.id ? data.dmchannel.user2.login : data.dmchannel.user1.login} accept your friend request`)
+			showNotification("FRIEND_REQUEST_ACCEPTED", `${data.dmchannel.user1?.id === data.user.id ? data.dmchannel.user2?.login : data.dmchannel.user1?.login} accept your friend request`)
 		})
 		
 		socket?.on("friendRequestDeclined", (data: { dmchannel: DMChannel, user: User}) => {
 			setUser(data.user);
-			showNotification("ERROR_FRIEND_REQUEST_DECLINED", `${data.dmchannel.user1.id === data.user.id ? data.dmchannel.user2.login : data.dmchannel.user1.login} decline your friend request`)
+			showNotification("ERROR_FRIEND_REQUEST_DECLINED", `${data.dmchannel.user1?.id === data.user.id ? data.dmchannel.user2?.login : data.dmchannel.user1?.login} decline your friend request`)
 		})
 
 		socket?.on("hasBeenBlocked", (data: { dmchannel: DMChannel, user: User }) => {
 			setUser(data.user)
-			showNotification("ERROR_HAS_BEEN_BLOCKED", `${data.dmchannel.user1.id === data.user.id ? data.dmchannel.user2.login : data.dmchannel.user1.login} has blocked you`)
+			showNotification("ERROR_HAS_BEEN_BLOCKED", `${data.dmchannel.user1?.id === data.user.id ? data.dmchannel.user2?.login : data.dmchannel.user1?.login} has blocked you`)
 		})
 		
 		socket?.on("hasBeenUnblocked", (data: { dmchannel: DMChannel, user: User }) => {
 			setUser(data.user)
-			showNotification("HAS_BEEN_UNBLOCKED", `${data.dmchannel.user1.id === data.user.id ? data.dmchannel.user2.login : data.dmchannel.user1.login} has unblocked you`)
+			showNotification("HAS_BEEN_UNBLOCKED", `${data.dmchannel.user1?.id === data.user.id ? data.dmchannel.user2?.login : data.dmchannel.user1?.login} has unblocked you`)
 		})
+	}
+	catch (e) {}
 
 	}, [socket])
 
