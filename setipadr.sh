@@ -10,3 +10,4 @@ then
 else
     echo "./Front-end/src/config.ts is missing, can't replace ip address"
 fi
+echo "My ip address is : $(hostname -i)"
