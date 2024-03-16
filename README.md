@@ -6,10 +6,10 @@ Transcendence is a project developed as part of 42 School. It's a versatile web 
 
 ## Features
 
-• Online pong game.
-• Chat system with chat rooms.
-• Friendship system between players.
-• Responsive and modern user interface.
+- Online pong game.
+- Chat system with chat rooms.
+- Friendship system between players.
+- Responsive and modern user interface.
 
 ## Installation
 
